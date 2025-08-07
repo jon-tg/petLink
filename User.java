@@ -1,29 +1,32 @@
-public class User {
-    int userID;
-    String email;
-    String password;
+import java.io.Serializable; 
+
+public abstract class User implements Serializable {
+    private String email;
+    private String password;
     
     // Creates a new user
-    User(String userID, String email, String password) {
-        this.userID = userID;
+    public User(String email, String password) {
         this.email = email;
         this.password = password;
     }
-    
-    boolean login(String email, String password) {
-        int valid = 1;
-        if (this.email != email) {
-            valid = 0;
-            print("Email is incorrect");
-        }
-        else if (this.password != password) {
-            valid = 0;
-            print("Password is incorrect");
-        }
-        return valid;
+
+    public String getEmail() {
+        return this.email;
     }
 
-    void viewDashboard() {
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+   public  void viewDashboard() {
         print("TBD");
     }
 
