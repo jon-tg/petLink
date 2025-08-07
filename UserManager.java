@@ -3,7 +3,7 @@ import java.io.*;
 
 public class UserManager {
 
-    // File path for ser file will go in File cosntructor
+    // dataFile stores user login credentials
     private File dataFile = new File("users.ser");
     private List<User> users;
 
@@ -13,8 +13,8 @@ public class UserManager {
 
     @SuppressWarnings("unchecked")
     private List<User> loadUsers() {
-        if (!this.dataFile.exists() || userFile.length() == 0) return new ArrayList<>();
-        try (ObjectStream in = new ObjectInputStream(new FileInputStream(dataFile))) {
+        if (!this.dataFile.exists() || dataFile.length() == 0) return new ArrayList<>();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(dataFile))) {
             return (List<User>) in.readObject();
         }
         catch (Exception e) {
@@ -24,11 +24,11 @@ public class UserManager {
     }
 
     public void saveUsers() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(userFIle))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(dataFile))) {
             out.writeObject(users);
         }
         catch (Exception e) {
-            e.printStackTrace()
+            e.printStackTrace();
         }
     }
 

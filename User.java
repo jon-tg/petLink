@@ -27,7 +27,7 @@ public abstract class User implements Serializable {
     }
 
    public  void viewDashboard() {
-        print("TBD");
+        System.out.print("TBD");
     }
 
 }
