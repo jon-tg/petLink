@@ -1,14 +1,16 @@
 import java.io.Serializable; 
 
 public abstract class User implements Serializable {
+    private String name;
     private static int userID = 0;
     private String email;
     private String password;
     
     // Creates a new user
-    public User(String email, String password) {
+    public User(String email, String password, String name) {
         this.email = email;
         this.password = password;
+        this.name = name;
         this.userID = userID++;
     }
 
@@ -18,6 +20,10 @@ public abstract class User implements Serializable {
 
     public String getEmail() {
         return this.email;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public String getPassword() {
