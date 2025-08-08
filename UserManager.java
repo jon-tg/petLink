@@ -14,7 +14,7 @@ public class UserManager {
     @SuppressWarnings("unchecked")
     private List<User> loadUsers() {
         if (!this.dataFile.exists() || dataFile.length() == 0) return new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(dataFile))) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.dataFile))) {
             return (List<User>) in.readObject();
         }
         catch (Exception e) {
@@ -24,30 +24,75 @@ public class UserManager {
     }
 
     public void saveUsers() {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(dataFile))) {
-            out.writeObject(users);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.dataFile))) {
+            out.writeObject(this.users);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addUser(User u) {
-        users.add(u);
+    public boolean addUser(User u) {
+        if (u == null || u.getEmail() == null || u.getPassword() == null) return false;
+        if (emailExists(u.getEmail())) return false; // Email cannot be in use already
+        this.users.add(u);
         saveUsers();
+        return true;
+    }
+
+    public User findById(int userId) {
+        for (User u: this.users) {
+            if (u.getId() == userId) return u;
+        }
+        return null;
+    }
+
+    public User findByEmail(String email) {
+        if (email == null) return null;
+        for (User u: this.users) {
+            if (email.equalsIgnoreCase(u.getEmail())) return u;
+        }
+        return null;
+    }
+
+    public boolean emailExists(String email) {
+        return findByEmail(email) != null;
+    }
+
+    public boolean removeUserById(int userId) {
+        boolean removed = users.removeIf(u -> u.getId() == userId);
+        if (removed) saveUsers();
+        return removed;
+    }
+
+    public boolean removeUserByEmail(String email) {
+        boolean removed = users.removeIf(u -> email != null && email.equalsIgnoreCase(u.getEmail()));
+        if (removed) saveUsers();
+        return removed;
+    }
+
+    public boolean changeUserEmail(int userId, String newEmail) {
+        if (newEmail == null || newEmail.isBlank()) return false;
+        if (emailExists(newEmail)) return false; // New email cannot be in use already
+
+        User u = findById(userId);
+        if (u == null) return false;
+
+        u.setEmail(newEmail);
+        saveUsers();
+        return true;
     }
 
     public List<User> getAll() {
-        return new ArrayList<>(users);
+        return new ArrayList<>(this.users);
     }
 
     public User login(String email, String password) {
-        User loggingIn = null;
         for(User u : this.users) {
-            if (email == u.getEmail() && password == u.getPassword()) {
-                loggingIn = u;
+            if (email.equals(u.getEmail()) && password.equals(u.getPassword())) {
+                return u;
             }
         }
-        return loggingIn;
+        return null;
     }
 }
