@@ -39,7 +39,6 @@ public class MainGUI {
         registerButton.setFont(btnFont);
         loginButton.setFont(btnFont);
 
-
         this.frame.add(buttonPanel, BorderLayout.CENTER);
 
         registerButton.addActionListener(e -> openRegistrationForm());
