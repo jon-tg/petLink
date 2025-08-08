@@ -4,7 +4,7 @@ import java.io.*;
 public class UserManager {
 
     // dataFile stores user login credentials
-    private File dataFile = new File("users.ser");
+    private File dataFile = new File("data/users.ser");
     private List<User> users;
 
     public UserManager() {

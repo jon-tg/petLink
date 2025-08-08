@@ -4,7 +4,7 @@ import java.io.*;
 public class PetManager {
 
     // dataFile stores pet data
-    private File dataFile = new File("pets.ser");
+    private File dataFile = new File("/data/pets.ser");
     private List<Pet> pets;
 
     public UserManager() {
