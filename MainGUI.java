@@ -13,40 +13,39 @@ public class MainGUI {
     }
 
     private void initialize() {
-        JFrame frame = new JFrame("PetLink - Main Menu");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1024, 768);
-        frame.setLayout(new BorderLayout());
+        this.frame = new JFrame("PetLink - Main Menu");
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setSize(700, 450);
+        this.frame.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("PETLINK MAIN MENU", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        frame.add(titleLabel, BorderLayout.NORTH);
+        this.frame.add(titleLabel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 0, 15));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
 
         JButton registerButton = new JButton("REGISTER");
         JButton loginButton = new JButton("LOGIN");
-        JButton exitButton = new JButton("EXIT");
+
+        registerButton.setPreferredSize(new Dimension(120, 40));
+        loginButton.setPreferredSize(new Dimension(120, 40));
 
         buttonPanel.add(registerButton);
         buttonPanel.add(loginButton);
-        buttonPanel.add(exitButton);
 
         Font btnFont = new Font("Segoe UI", Font.BOLD, 18);
         registerButton.setFont(btnFont);
         loginButton.setFont(btnFont);
-        exitButton.setFont(btnFont);
 
 
-        frame.add(buttonPanel, BorderLayout.CENTER);
+        this.frame.add(buttonPanel, BorderLayout.CENTER);
 
         registerButton.addActionListener(e -> openRegistrationForm());
         loginButton.addActionListener(e -> openLoginForm());
-        exitButton.addActionListener(e -> System.exit(0));
 
-        frame.setVisible(true);
+        this.frame.setVisible(true);
     }
 
     private void openRegistrationForm() {
@@ -64,7 +63,7 @@ public class MainGUI {
             "ROLE: ", roleDropdown
         };
 
-        int option = JOptionPane.showConfirmDialog(frame, message, "REGISTER", JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(this.frame, message, "REGISTER", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             String name = nameField.getText();
             String email = emailField.getText();
@@ -81,7 +80,7 @@ public class MainGUI {
             else  { newUser = new FosterUser(email, password, name); }
     
             userManager.addUser(newUser);
-            JOptionPane.showMessageDialog(frame, role + " REGISTERED SUCCESSFULLY!");
+            JOptionPane.showMessageDialog(this.frame, role + " REGISTERED SUCCESSFULLY!");
         }
 
     }
@@ -91,23 +90,23 @@ public class MainGUI {
         JPasswordField passwordField = new JPasswordField();
 
         Object[] message = {
-            "Email: ", emailField,
-            "Password: ", passwordField
+            "EMAIL: : ", emailField,
+            "PASSWORD: ", passwordField
         };
 
-        int option = JOptionPane.showConfirmDialog(frame, message, "Login", JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(this.frame, message, "LOGIN", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
 
             User login = userManager.login(email, password);
             if (login != null ){
-                JOptionPane.showMessageDialog(frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName());
+                JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName());
                 //  OPEN DASHBOARD FOR ROLE
             } 
             else {
                 userManager.printAllUsers();
-                JOptionPane.showMessageDialog(frame, "INVALID EMAIL OR PASSWORD.");
+                JOptionPane.showMessageDialog(this.frame, "INVALID EMAIL OR PASSWORD.");
             }
         }
 
