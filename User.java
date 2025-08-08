@@ -26,8 +26,5 @@ public abstract class User implements Serializable {
         this.password = password;
     }
 
-   public  void viewDashboard() {
-        System.out.print("TBD");
-    }
-
+    public abstract void viewDashboard();
 }
