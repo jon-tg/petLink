@@ -1,17 +1,23 @@
 import java.io.Serializable; 
 
 public abstract class User implements Serializable {
+    private String name;
     private String email;
     private String password;
     
     // Creates a new user
-    public User(String email, String password) {
+    public User(String email, String password, String name) {
         this.email = email;
         this.password = password;
+        this.name = name;
     }
 
     public String getEmail() {
         return this.email;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public String getPassword() {

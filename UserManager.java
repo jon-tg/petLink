@@ -41,13 +41,19 @@ public class UserManager {
         return new ArrayList<>(users);
     }
 
+    // For debugging
+    public void printAllUsers() {
+        for (User user : users) {
+            System.out.println(user.getName() + " "+ user.getEmail() + " " + user.getPassword());
+        }
+    }
+
     public User login(String email, String password) {
-        User loggingIn = null;
-        for(User u : this.users) {
-            if (email == u.getEmail() && password == u.getPassword()) {
-                loggingIn = u;
+        for (User u : this.users) {
+            if (email.equals(u.getEmail()) && password.equals(u.getPassword())) {
+                return u;
             }
         }
-        return loggingIn;
+        return null;
     }
 }
