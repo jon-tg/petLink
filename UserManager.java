@@ -89,7 +89,7 @@ public class UserManager {
         User u = findById(userId);
         if (u == null) return false;
 
-        u.changePassword(newEmail);
+        u.changePassword(newPassword);
         saveUsers();
         return true;
     }

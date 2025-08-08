@@ -2,7 +2,8 @@ import java.io.Serializable;
 
 public abstract class User implements Serializable {
     private String name;
-    private static int userID = 0;
+    private static int nextId = 0;
+    private int userId = 0;
     private String email;
     private String password;
     
@@ -11,11 +12,11 @@ public abstract class User implements Serializable {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.userID = userID++;
+        this.userId = nextId++;
     }
 
-    public getID() {
-        return this.userID;
+    public int getId() {
+        return this.userId;
     }
 
     public String getEmail() {

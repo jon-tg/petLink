@@ -69,19 +69,32 @@ public class MainGUI {
             String password = new String(passwordField.getPassword());
             String role = (String) roleDropdown.getSelectedItem();
 
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this.frame, "MUST ENTER ALL REGISTRATION FIELDS!");
+                return;
+            }
+
             User newUser;
 
             if ("Foster User".equals(role)) {
                 newUser = new FosterUser(email, password, name);
             }
 
-            // Change to FosterStaff constructor when class is made
-            else  { newUser = new FosterUser(email, password, name); }
-    
-            userManager.addUser(newUser);
-            JOptionPane.showMessageDialog(this.frame, role + " REGISTERED SUCCESSFULLY!");
-        }
+            else  {
+                // Change to FosterStaff constructor when class is made
+                newUser = new FosterUser(email, password, name);
+            }
 
+            boolean registered = userManager.addUser(newUser);
+
+            if (registered) {
+                JOptionPane.showMessageDialog(this.frame, role + " REGISTERED SUCCESSFULLY!");
+            }
+
+            else {
+                JOptionPane.showMessageDialog(this.frame, "EMAIL IS REGISTERED WITH EXISTING USER.");
+            }
+        }
     }
 
     private void openLoginForm() {
