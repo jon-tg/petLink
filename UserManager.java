@@ -78,7 +78,18 @@ public class UserManager {
         User u = findById(userId);
         if (u == null) return false;
 
-        u.setEmail(newEmail);
+        u.changeEmail(newEmail);
+        saveUsers();
+        return true;
+    }
+
+    public boolean changeUserPassword(int userId, String newPassword) {
+        if (newPassword == null || newPassword.isBlank()) return false;
+
+        User u = findById(userId);
+        if (u == null) return false;
+
+        u.changePassword(newEmail);
         saveUsers();
         return true;
     }
