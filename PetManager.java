@@ -7,7 +7,7 @@ public class PetManager {
     private File dataFile = new File("/data/pets.ser");
     private List<Pet> pets;
 
-    public UserManager() {
+    public PetManager() {
         this.pets = loadPets();
     }
 

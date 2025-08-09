@@ -144,8 +144,11 @@ public class MainGUI {
 
             User login = userManager.login(email, password);
             if (login != null ){
-                JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName());
-                //  OPEN DASHBOARD FOR ROLE
+                JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName().toUpperCase());
+                UserGUI userDashboard = new UserGUI(login, userManager, new PetManager());
+                frame.setContentPane(userDashboard);
+                frame.revalidate();
+                frame.repaint();
             } 
             else {
                 userManager.printAllUsers();
