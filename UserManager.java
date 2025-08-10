@@ -2,9 +2,8 @@ import java.util.*;
 import java.io.*;
 
 public class UserManager {
-
     // dataFile stores user login credentials
-    private File dataFile = new File("users.ser");
+    private File dataFile = new File("data/users.ser");
     private List<User> users;
 
     public UserManager() {
@@ -24,6 +23,12 @@ public class UserManager {
     }
 
     public void saveUsers() {
+        // Checks existence of data directory (creates one if doesn't exist)
+        File parent = dataFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.dataFile))) {
             out.writeObject(this.users);
         }
@@ -42,7 +47,7 @@ public class UserManager {
 
     public User findById(int userId) {
         for (User u: this.users) {
-            if (u.getId() == userId) return u;
+            if (u.getID() == userId) return u;
         }
         return null;
     }
@@ -60,7 +65,7 @@ public class UserManager {
     }
 
     public boolean removeUserById(int userId) {
-        boolean removed = users.removeIf(u -> u.getId() == userId);
+        boolean removed = users.removeIf(u -> u.getID() == userId);
         if (removed) saveUsers();
         return removed;
     }
@@ -89,7 +94,7 @@ public class UserManager {
         User u = findById(userId);
         if (u == null) return false;
 
-        u.changePassword(newEmail);
+        u.changePassword(newPassword);
         saveUsers();
         return true;
     }

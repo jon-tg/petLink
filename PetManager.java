@@ -2,12 +2,11 @@ import java.util.*;
 import java.io.*;
 
 public class PetManager {
-
     // dataFile stores pet data
-    private File dataFile = new File("pets.ser");
+    private File dataFile = new File("data/pets.ser");
     private List<Pet> pets;
 
-    public UserManager() {
+    public PetManager() {
         this.pets = loadPets();
     }
 
@@ -24,6 +23,11 @@ public class PetManager {
     }
 
     public void savePets() {
+        File parent = dataFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.dataFile))) {
             out.writeObject(this.pets);
         }
@@ -34,11 +38,11 @@ public class PetManager {
 
     public void addPet(Pet p) {
         this.pets.add(p);
-        saveUsers();
+        savePets();
     }
 
     public boolean removePetById(int petId) {
-        boolean removed = this.pets.removeIf(p -> p.getID() == petID);
+        boolean removed = this.pets.removeIf(p -> p.getID() == petId);
         if (removed) savePets();
         return removed;
     }
@@ -59,7 +63,7 @@ public class PetManager {
     }
 
     public boolean updateStatus(int petId, String newStatus) {
-        Pet p = findById(pet Id);
+        Pet p = findById(petId);
         if (p == null) return false;
         p.changeStatus(newStatus);
         savePets();
@@ -75,13 +79,16 @@ public class PetManager {
     }
 
     public List<Pet> search(String species, String breed, int minAge, int maxAge, String temperament) {
+        boolean useMin = (minAge >= 0);
+        boolean useMax = (maxAge >= 0);
+
         return pets.stream()
             // Any null search parameters are skipped & not filtered
             .filter(p -> species == null || p.getSpecies().equalsIgnoreCase(species))
             .filter(p -> breed == null || p.getBreed().equalsIgnoreCase(breed))
             .filter(p -> temperament == null || p.getTemperament().equalsIgnoreCase(temperament))
-            .filter(p -> minAge == null || p.getAge() >= minAge)
-            .filter(p -> maxAge == null || p.getAge <= maxAge)
+            .filter(p -> !useMin || p.getAge() >= minAge)
+            .filter(p -> !useMax || p.getAge <= maxAge)
             .collect(Collectors.toList());
     }
 }
