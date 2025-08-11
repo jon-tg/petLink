@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class UserManager {
     // dataFile stores user login credentials

@@ -8,23 +8,23 @@ public class FosterUser extends User {
     }
 
     public void viewDashboard() {
+        System.out.println("Testing");
+    }
+
+//     public boolean submitApplication(Pet pet) {
+
+//     }
+
+//     public void viewApplications() {
         
-    }
+//     }
 
-    public boolean submitApplication(Pet pet) {
-
-    }
-
-    public void viewApplications() {
+//     public void viewAllPets() {
         
-    }
+//     }
 
-    public void viewAllPets() {
+//     public void viewPetsByShelter() {
         
-    }
-
-    public void viewPetsByShelter() {
-        
-    }
+//     }
 
 }

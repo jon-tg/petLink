@@ -5,9 +5,11 @@ import java.awt.event.*;
 public class MainGUI {
     private JFrame frame;
     private UserManager userManager;
+    private ShelterManager shelterManager;
 
-    public MainGUI (UserManager userManager) {
+    public MainGUI (UserManager userManager, ShelterManager shelterManager) {
         this.userManager = userManager;
+        this.shelterManager = shelterManager;
         SwingUtilities.invokeLater(this:: initialize);
     }
 
@@ -43,76 +45,94 @@ public class MainGUI {
         Image scaled = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         Icon pawIcon = new ImageIcon(scaled);        
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 35, 20));
+
+        JPanel topRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 7, 0));
+        JPanel bottomRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 7, 0));
 
         JButton registerButton = new JButton("SIGNUP");
         JButton loginButton = new JButton("LOGIN");
+        JButton registerShelterButton = new JButton("REGISTER SHELTER");
 
-        Font btnFont = new Font("Segoe UI", Font.BOLD, 18);
+        Font btnFont = new Font("Segoe UI", Font.BOLD, 14);
+
         registerButton.setFont(btnFont);
         loginButton.setFont(btnFont);
+        registerShelterButton.setFont(btnFont);
 
         registerButton.setIcon(pawIcon);
         loginButton.setIcon(pawIcon);
+        registerShelterButton.setIcon(pawIcon);
 
-        registerButton.setHorizontalTextPosition(SwingConstants.RIGHT);
-        loginButton.setHorizontalTextPosition(SwingConstants.RIGHT);
-        
-        registerButton.setIconTextGap(8);
-        loginButton.setIconTextGap(8);
+        styleButtons(registerButton, loginButton, registerShelterButton);
 
-        registerButton.setPreferredSize(new Dimension(140, 40));
-        loginButton.setPreferredSize(new Dimension(140, 40));
-        registerButton.setFocusPainted(false);
-        loginButton.setFocusPainted(false);
+        topRow.add(registerButton);
+        topRow.add(loginButton);
+        bottomRow.add(registerShelterButton);
 
-        buttonPanel.add(registerButton);
-        buttonPanel.add(loginButton);
+        topRow.setMaximumSize(topRow.getPreferredSize());
+        bottomRow.setMaximumSize(bottomRow.getPreferredSize());
+
+        buttonPanel.add(topRow);
+        buttonPanel.add(Box.createVerticalStrut(6));
+        buttonPanel.add(bottomRow);
+
         this.frame.add(buttonPanel, BorderLayout.CENTER);
 
         registerButton.addActionListener(e -> openRegistrationForm());
         loginButton.addActionListener(e -> openLoginForm());
+        registerShelterButton.addActionListener(e -> openShelterRegistrationForm());
 
         this.frame.setVisible(true);
     }
 
     private void openRegistrationForm() {
-        JTextField nameField = new JTextField();
-        JTextField emailField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
+        String[] roles = {"PETLINK USER", "SHELTER STAFF"};
+        String role = (String) JOptionPane.showInputDialog(this.frame, "SELECT ROLE: ", "REGISTER ", JOptionPane.PLAIN_MESSAGE, null, roles, roles[0]);
+        if (role == null) return;
 
-        String[] roles = {"FOSTER USER", "SHELTER STAFF"};
-        JComboBox<String> roleDropdown = new JComboBox<>(roles);
+        JTextField nameField = new JTextField(15);
+        JTextField emailField = new JTextField(15);
+        JPasswordField passwordField = new JPasswordField(15);
+        JTextField shelterIdField = new JTextField(15);
 
         Object[] message = {
             "NAME: ", nameField,
             "EMAIL: ", emailField,
-            "PASSWORD: ", passwordField,
-            "ROLE: ", roleDropdown
+            "PASSWORD: ", passwordField
         };
 
-        int option = JOptionPane.showConfirmDialog(this.frame, message, "REGISTER", JOptionPane.OK_CANCEL_OPTION);
+        if (role.equals("SHELTER STAFF")) {
+            message = new Object[] {
+                "NAME: ", nameField,
+                "EMAIL: ", emailField,
+                "PASSWORD: ", passwordField,
+                "SHELTER ID: ", shelterIdField
+            };
+        }
+
+        int option = JOptionPane.showConfirmDialog(this.frame, message, "REGISTER " + role, JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             String name = nameField.getText();
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
-            String role = (String) roleDropdown.getSelectedItem();
 
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || role.equals("SHELTER STAFF") && (shelterIdField.getText().isEmpty() || shelterManager.findByJoinCode(shelterIdField.getText()) == null)) {
                 JOptionPane.showMessageDialog(this.frame, "MUST ENTER ALL REGISTRATION FIELDS!");
                 return;
             }
 
             User newUser;
 
-            if ("Foster User".equals(role)) {
+            if ("PETLINK USER".equals(role)) {
                 newUser = new FosterUser(email, password, name);
             }
 
             else  {
-                // Change to FosterStaff constructor when class is made
-                newUser = new FosterUser(email, password, name);
+                Shelter shelter = shelterManager.findByJoinCode(shelterIdField.getText());
+                newUser = new ShelterStaff(email, password, name, shelter.getShelterID());
             }
 
             boolean registered = userManager.addUser(newUser);
@@ -121,10 +141,62 @@ public class MainGUI {
                 JOptionPane.showMessageDialog(this.frame, role + " REGISTERED SUCCESSFULLY!");
             }
 
-            else {
+            else if ("PETLINK USER".equals(role)) {
                 JOptionPane.showMessageDialog(this.frame, "EMAIL IS REGISTERED WITH EXISTING USER.");
             }
+
+            else {
+                JOptionPane.showMessageDialog(this.frame, "SHELTER ID DOES NOT MATCH ANY EXISTING SHELTERS.");
+            }
         }
+    }
+
+    private void openShelterRegistrationForm() {
+        JTextField nameField = new JTextField(15);
+        JTextField addressField = new JTextField(15);
+        JTextField stateField = new JTextField(30);
+
+        Object[] message = {
+            "SHELTER NAME: ", nameField,
+            "ADDRESS: ", addressField,
+            "STATE: ", stateField
+        };
+
+        int option = JOptionPane.showConfirmDialog(this.frame, message, "REGISTER SHELTER", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            String name = nameField.getText();
+            String address = addressField.getText();
+            String state = stateField.getText();
+
+            if (name.isEmpty() || address.isEmpty() || state.isEmpty()) {
+                JOptionPane.showMessageDialog(this.frame, "MUST ENTER ALL REGISTRATION FIELDS!");
+                return;
+            }
+
+            Shelter newShelter = new Shelter(name, address, state);
+            shelterManager.addShelter(newShelter);
+            JOptionPane.showMessageDialog(this.frame, "SHELTER JOIN CODE: " + newShelter.getJoinCode());
+            System.out.println(newShelter.getJoinCode());
+        }
+    }
+
+    // Helper method to style buttons in MainGUI
+    private void styleButtons(JButton registerButton, JButton loginButton, JButton registerShelterButton) {
+        registerButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        loginButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        registerShelterButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+
+        registerButton.setIconTextGap(8);
+        loginButton.setIconTextGap(8);
+        registerShelterButton.setIconTextGap(8);
+
+        registerButton.setPreferredSize(new Dimension(140, 40));
+        loginButton.setPreferredSize(new Dimension(140, 40));
+        registerShelterButton.setPreferredSize(new Dimension(200, 40));
+
+        registerButton.setFocusPainted(false);
+        registerShelterButton.setFocusPainted(false);
+        loginButton.setFocusPainted(false);
     }
 
     private void openLoginForm() {
@@ -132,7 +204,7 @@ public class MainGUI {
         JPasswordField passwordField = new JPasswordField();
 
         Object[] message = {
-            "EMAIL: : ", emailField,
+            "EMAIL: ", emailField,
             "PASSWORD: ", passwordField
         };
 
@@ -142,7 +214,7 @@ public class MainGUI {
             String password = new String(passwordField.getPassword());
 
             User login = userManager.login(email, password);
-            if (login != null ){
+            if (login != null ) {
                 JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName().toUpperCase());
                 UserGUI userDashboard = new UserGUI(login, userManager, new PetManager());
                 frame.setContentPane(userDashboard);
@@ -154,8 +226,5 @@ public class MainGUI {
                 JOptionPane.showMessageDialog(this.frame, "INVALID EMAIL OR PASSWORD.");
             }
         }
-
-
     }
-
 }

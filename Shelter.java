@@ -1,21 +1,64 @@
 
 import java.util.*;
+import java.io.Serializable;
 
-public class Shelter{
-
+public class Shelter implements Serializable {
+    private static int nextId = 0;
     private int shelterID;
-    private List<Pet> petList;
+    private String joinCode;
+    private String name;
+    private String address;
+    private String state;
 
-    public Shelter() {
-        Random random = new Random();
-        this.shelterID = random.nextInt(9999-1000 + 1) + 1000; //create random 4 digit id 
+    public Shelter(String name, String address, String state) {
+        this.shelterID = this.nextId++;
+        this.joinCode = genRandomJoinCode();
+        this.name = name;
+        this.address = address;
+        this.state = state;
     }
-
+    
     public int getShelterID(){
         return this.shelterID;
     }
 
-    
+    public String getJoinCode() {
+        return this.joinCode;
+    }
 
+    public String getName() {
+        return this.name;
+    }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public String getState() {
+        return this.state;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    private String genRandomJoinCode() {
+        String codeSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(6);
+
+        for (int i = 0; i < 6; i++) {
+            sb.append(codeSet.charAt(random.nextInt(codeSet.length())));
+        }
+        String joinCode = sb.toString();
+        return joinCode;
+    }
 }

@@ -1,24 +1,25 @@
 import java.io.Serializable; 
 
 public class Pet implements Serializable {
-    private static int petID = 0;
+    private static int nextId = 0;
+    private int petID;
     private String name;
     private String species;
     private String breed;
     private int age;
     private String temperament;
     private String status;
-    private Shelter shelterLocation;
+    private int shelterID;
 
-    public Pet(String name, String species, String breed, int age, String temperament, Shelter shelterLocation) {
-        this.petID = petID++;
+    public Pet(String name, String species, String breed, int age, String temperament, int shelterID) {
+        this.petID = nextId++;
         this.name = name;
         this.species = species;
         this.breed = breed;
         this.age = age;
         this.temperament = temperament;
         this.status = "Available";
-        this.shelterLocation = shelterLocation;
+        this.shelterID = shelterID;
     }
 
     public void changeName(String name) {
@@ -45,8 +46,8 @@ public class Pet implements Serializable {
         this.status = status;
     }
 
-    public void changeShelterLocation(Shelter shelter) {
-        this.shelterLocation = shelter;
+    public void changeShelterID(int shelterID) {
+        this.shelterID = shelterID;
     }
 
     public int getID() {
@@ -77,8 +78,8 @@ public class Pet implements Serializable {
         return this.status;
     }
 
-    public Shelter getShelterLocation() {
-        return this.shelterLocation;
+    public int getShelterID() {
+        return this.shelterID;
     }
 
     public boolean isAvailable() {

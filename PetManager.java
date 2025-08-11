@@ -79,6 +79,10 @@ public class PetManager {
         return true;
     }
 
+    public List<Pet> searchByShelter(int shelterId) {
+        return pets.stream().filter(p -> p.getShelterID() == shelterId).collect(Collectors.toList());
+    }
+
     public List<Pet> search(String species, String breed, int minAge, int maxAge, String temperament) {
         boolean useMin = (minAge >= 0);
         boolean useMax = (maxAge >= 0);
