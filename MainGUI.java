@@ -5,10 +5,12 @@ import java.awt.event.*;
 public class MainGUI {
     private JFrame frame;
     private UserManager userManager;
+    private PetManager petManager;
     private ShelterManager shelterManager;
 
-    public MainGUI (UserManager userManager, ShelterManager shelterManager) {
+    public MainGUI (UserManager userManager, PetManager petManager, ShelterManager shelterManager) {
         this.userManager = userManager;
+        this.petManager = petManager;
         this.shelterManager = shelterManager;
         SwingUtilities.invokeLater(this:: initialize);
     }
@@ -41,10 +43,6 @@ public class MainGUI {
 
         frame.add(titlePanel, BorderLayout.NORTH);
 
-        ImageIcon icon = new ImageIcon("icons/paw2.png");
-        Image scaled = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-        Icon pawIcon = new ImageIcon(scaled);        
-
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 35, 20));
@@ -55,16 +53,6 @@ public class MainGUI {
         JButton registerButton = new JButton("SIGNUP");
         JButton loginButton = new JButton("LOGIN");
         JButton registerShelterButton = new JButton("REGISTER SHELTER");
-
-        Font btnFont = new Font("Segoe UI", Font.BOLD, 14);
-
-        registerButton.setFont(btnFont);
-        loginButton.setFont(btnFont);
-        registerShelterButton.setFont(btnFont);
-
-        registerButton.setIcon(pawIcon);
-        loginButton.setIcon(pawIcon);
-        registerShelterButton.setIcon(pawIcon);
 
         styleButtons(registerButton, loginButton, registerShelterButton);
 
@@ -180,23 +168,21 @@ public class MainGUI {
         }
     }
 
-    // Helper method to style buttons in MainGUI
-    private void styleButtons(JButton registerButton, JButton loginButton, JButton registerShelterButton) {
-        registerButton.setHorizontalTextPosition(SwingConstants.RIGHT);
-        loginButton.setHorizontalTextPosition(SwingConstants.RIGHT);
-        registerShelterButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+    // Helper method to style buttons throughout GUIs 
+    public static void styleButtons(JButton... buttons) {
+        ImageIcon icon = new ImageIcon("icons/paw2.png");
+        Image scaled = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        Icon pawIcon = new ImageIcon(scaled);  
+        Font btnFont = new Font("Segoe UI", Font.BOLD, 14);
 
-        registerButton.setIconTextGap(8);
-        loginButton.setIconTextGap(8);
-        registerShelterButton.setIconTextGap(8);
-
-        registerButton.setPreferredSize(new Dimension(140, 40));
-        loginButton.setPreferredSize(new Dimension(140, 40));
-        registerShelterButton.setPreferredSize(new Dimension(200, 40));
-
-        registerButton.setFocusPainted(false);
-        registerShelterButton.setFocusPainted(false);
-        loginButton.setFocusPainted(false);
+        for (JButton btn : buttons) {
+            btn.setFont(btnFont);
+            btn.setIcon(pawIcon);
+            btn.setHorizontalTextPosition(SwingConstants.RIGHT);
+            btn.setIconTextGap(8);
+            btn.setPreferredSize(new Dimension(140, 40));
+            btn.setFocusPainted(false);
+        }
     }
 
     private void openLoginForm() {
@@ -216,7 +202,7 @@ public class MainGUI {
             User login = userManager.login(email, password);
             if (login != null ) {
                 JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName().toUpperCase());
-                UserGUI userDashboard = new UserGUI(login, userManager, new PetManager());
+                UserGUI userDashboard = new UserGUI(login, userManager, petManager, shelterManager);
                 frame.setContentPane(userDashboard);
                 frame.revalidate();
                 frame.repaint();

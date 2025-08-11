@@ -71,10 +71,10 @@ public class PetManager {
         return true;
     }
 
-    public boolean reassignShelter(int petId, Shelter shelter) {
+    public boolean reassignShelter(int petId, int shelterID) {
         Pet p = findById(petId);
         if (p == null) return false;
-        p.changeShelterLocation(shelter);
+        p.changeShelterID(shelterID);
         savePets();
         return true;
     }

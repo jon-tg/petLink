@@ -8,6 +8,6 @@ public class Main {
     private final static ShelterManager shelterManager = new ShelterManager();
 
     public static void main(String[] args) {
-        new MainGUI(userManager, shelterManager);
+        new MainGUI(userManager, petManager, shelterManager);
     }
 }
