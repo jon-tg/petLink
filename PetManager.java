@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class PetManager {
     // dataFile stores pet data
@@ -88,7 +89,7 @@ public class PetManager {
             .filter(p -> breed == null || p.getBreed().equalsIgnoreCase(breed))
             .filter(p -> temperament == null || p.getTemperament().equalsIgnoreCase(temperament))
             .filter(p -> !useMin || p.getAge() >= minAge)
-            .filter(p -> !useMax || p.getAge <= maxAge)
+            .filter(p -> !useMax || p.getAge() <= maxAge)
             .collect(Collectors.toList());
     }
 }

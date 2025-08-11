@@ -17,7 +17,7 @@ public class UserGUI extends JPanel {
         add(buildContent(), BorderLayout.CENTER);
     }
 
-    private JComponent getHeader() {
+    private JComponent buildHeader() {
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setBorder(BorderFactory.createEmptyBorder(16, 16, 8, 16));
@@ -26,7 +26,7 @@ public class UserGUI extends JPanel {
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel sub = new JLabel(currentUser.getEmail(currentUser.getEmail().toUpperCase()));
+        JLabel sub = new JLabel(currentUser.getEmail().toUpperCase());
         sub.setForeground(new Color(110, 100, 110));
         sub.setAlignmentX(Component.LEFT_ALIGNMENT);
 

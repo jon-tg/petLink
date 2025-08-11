@@ -1,10 +1,11 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class ApplicationManager {
     // dataFile stores foster application data
     private File dataFile = new File("data/applications.ser");
-    private List<Application> applications;
+    private List<FosterApplication> applications;
 
     public ApplicationManager() {
         this.applications = loadApplications();
@@ -41,15 +42,15 @@ public class ApplicationManager {
         saveApplications();
     }
 
-    public boolean removeApplicationById(String applicationID) {
-        boolean removed = this.applications.removeIf(a -> a.getApplicationID().equals(applicationID));
+    public boolean removeApplicationById(int applicationID) {
+        boolean removed = this.applications.removeIf(a -> a.getApplicationID() == applicationID);
         if (removed) saveApplications();
         return removed;
     }
 
-    public FosterApplication findById(String applicationID) {
+    public FosterApplication findById(int applicationID) {
         for (FosterApplication a : applications) {
-            if (a.getApplicationID().equals(applicationID)) return a;
+            if (a.getApplicationID() == applicationID) return a;
         }
         return null;
     }
@@ -58,21 +59,21 @@ public class ApplicationManager {
         return new ArrayList<>(this.applications);
     }
 
-    public List<FosterApplication> getByUser(String userID) {
+    public List<FosterApplication> getByUser(int userID) {
         return this.applications.stream()
-                .filter(a -> a.getUserID().equals(userID))
+                .filter(a -> a.getUserId() == userID)
                 .collect(Collectors.toList());
     }
 
-    public List<FosterApplication> getByPet(String petID) {
+    public List<FosterApplication> getByPet(int petID) {
         return this.applications.stream()
-                .filter(a -> a.getPetID().equals(petID))
+                .filter(a -> a.getPetId() == petID)
                 .collect(Collectors.toList());
     }
 
-    public List<FosterApplication> getByShelter(String shelterID) {
+    public List<FosterApplication> getByShelter(int shelterID) {
         return this.applications.stream()
-                .filter(a -> a.getShelterID().equals(shelterID))
+                .filter(a -> a.getShelterId() == shelterID)
                 .collect(Collectors.toList());
     }
 
@@ -82,7 +83,7 @@ public class ApplicationManager {
                 .collect(Collectors.toList());
     }
 
-    public boolean updateStatus(String applicationID, String newStatus) {
+    public boolean updateStatus(int applicationID, String newStatus) {
         FosterApplication a = findById(applicationID);
         if (a == null) return false;
         a.updateStatus(newStatus);

@@ -28,7 +28,7 @@ public class FosterApplication implements Serializable {
     }
 
     public int getUserId() {
-        return this.UserId;
+        return this.userId;
     }
 
     public int getShelterId() {
