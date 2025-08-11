@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class MainGUI {
-
     private JFrame frame;
     private UserManager userManager;
 
