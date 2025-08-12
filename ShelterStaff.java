@@ -1,7 +1,12 @@
+
+
 public class ShelterStaff extends User {
 
-    public ShelterStaff(String email, String password, String name) {
+    private Shelter parentShelter;
+
+    public ShelterStaff(String email, String password, String name, int ShelterID) {
         super(email, password, name);
+        // TODO set parent shelter 
         // need something for staff crededentials here
     }
 
@@ -19,6 +24,10 @@ public class ShelterStaff extends User {
 
     public void removePet(Pet pet){
         
+    }
+
+    public List viewApplications(){
+
     }
 
 
