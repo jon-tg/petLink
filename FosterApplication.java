@@ -3,7 +3,7 @@ import java.io.Serializable;
 
 public class FosterApplication implements Serializable {
     private static int nextId = 0;
-    private int applicationId;
+    private String applicationId;
     private int petId;
     private int userId;
     private int shelterId;
@@ -11,7 +11,7 @@ public class FosterApplication implements Serializable {
     private LocalDateTime timestamp;
 
     public FosterApplication(int petID, int userID, int shelterID) {
-        this.applicationId = nextId++;
+        this.applicationId = Integer.toString(nextId++);
         this.petId = petID;
         this.userId = userID;
         this.shelterId = shelterID;
@@ -19,7 +19,7 @@ public class FosterApplication implements Serializable {
         this.timestamp = LocalDateTime.now();
     }
 
-    public int getApplicationID() {
+    public String getApplicationID() {
         return this.applicationId;
     }
 

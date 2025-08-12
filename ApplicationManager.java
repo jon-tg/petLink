@@ -1,10 +1,11 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class ApplicationManager {
     // dataFile stores foster application data
     private File dataFile = new File("data/applications.ser");
-    private List<Application> applications;
+    private List<FosterApplication> applications;
 
     public ApplicationManager() {
         this.applications = loadApplications();

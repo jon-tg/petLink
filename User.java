@@ -39,5 +39,13 @@ public abstract class User implements Serializable {
         this.password = password;
     }
 
+    public void login(String email, String password) {
+        if (this.email.equals(email) && this.password.equals(password)) {
+            System.out.println("Login successful for " + this.name);
+        } else {
+            System.out.println("Login failed for " + this.name);
+        }
+    }
+
     public abstract void viewDashboard();
 }
