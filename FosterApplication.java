@@ -4,17 +4,17 @@ import java.io.Serializable;
 public class FosterApplication implements Serializable {
     private static int nextId = 0;
     private String applicationId;
-    private int petId;
-    private int userId;
-    private int shelterId;
+    private String petId;
+    private String userId;
+    private String shelterId;
     private String status; // can be Pending, Approved, or Rejected
     private LocalDateTime timestamp;
 
     public FosterApplication(int petID, int userID, int shelterID) {
         this.applicationId = Integer.toString(nextId++);
-        this.petId = petID;
-        this.userId = userID;
-        this.shelterId = shelterID;
+        this.petId = Integer.toString(petID);
+        this.userId = Integer.toString(userID);
+        this.shelterId = Integer.toString(shelterID);
         this.status = "Pending";
         this.timestamp = LocalDateTime.now();
     }
@@ -23,15 +23,15 @@ public class FosterApplication implements Serializable {
         return this.applicationId;
     }
 
-    public int getPetId() {
+    public String getPetId() {
         return this.petId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return this.userId;
     }
 
-    public int getShelterId() {
+    public String getShelterId() {
         return this.shelterId;
     }
 

@@ -61,19 +61,19 @@ public class ApplicationManager {
 
     public List<FosterApplication> getByUser(String userID) {
         return this.applications.stream()
-                .filter(a -> a.getUserID().equals(userID))
+                .filter(a -> a.getUserId().equals(userID))
                 .collect(Collectors.toList());
     }
 
     public List<FosterApplication> getByPet(String petID) {
         return this.applications.stream()
-                .filter(a -> a.getPetID().equals(petID))
+                .filter(a -> a.getPetId().equals(petID))
                 .collect(Collectors.toList());
     }
 
     public List<FosterApplication> getByShelter(String shelterID) {
         return this.applications.stream()
-                .filter(a -> a.getShelterID().equals(shelterID))
+                .filter(a -> a.getShelterId().equals(shelterID))
                 .collect(Collectors.toList());
     }
 
