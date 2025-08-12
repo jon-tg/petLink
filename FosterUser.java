@@ -2,6 +2,7 @@ import java.util.*;
 
 public class FosterUser extends User {
     private List<FosterApplication> fosterApplications;
+    private ApplicationManager applicationManager;
 
     public FosterUser(String email, String password, String name) {
         super(email, password, name);
@@ -11,17 +12,19 @@ public class FosterUser extends User {
         System.out.println("Testing");
     }
 
-//     public boolean submitApplication(Pet pet) {
+    public boolean submitApplication(Pet pet) {
+        FosterApplication application = new FosterApplication(pet.getID(), this.getID(), pet.getShelterID());
+        applicationManager.addApplication(application);
+        return true;
+    }
 
-//     }
+    public void viewApplications() {
+        applicationManager.getAll();
+    }
 
-//     public void viewApplications() {
-        
-//     }
-
-//     public void viewAllPets() {
-        
-//     }
+    // public void viewAllPets() {
+    //     Shelter curr = shelterManager.getAll()
+    // }
 
 //     public void viewPetsByShelter() {
         
