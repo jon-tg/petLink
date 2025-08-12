@@ -13,9 +13,22 @@ public class FosterUser extends User {
     }
 
     public boolean submitApplication(Pet pet) {
-        FosterApplication application = new FosterApplication(pet.getID(), this.getID(), pet.getShelterID());
-        applicationManager.addApplication(application);
-        return true;
+        try {
+            FosterApplication application = new FosterApplication(pet.getID(), this.getID(), pet.getShelterID());
+
+            applicationManager.addApplication(application);
+
+            if (fosterApplications == null) {
+                fosterApplications = new ArrayList<>();
+            } else {
+                fosterApplications.add(application);
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void viewApplications() {
