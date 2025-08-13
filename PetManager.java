@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 public class PetManager {
     // dataFile stores pet data
     private File dataFile = new File("data/pets.ser");
+    private int nextId;
     private List<Pet> pets;
 
     public PetManager() {
@@ -30,6 +31,7 @@ public class PetManager {
         }
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.dataFile))) {
+            reseed();
             out.writeObject(this.pets);
         }
         catch (Exception e) {
@@ -37,7 +39,8 @@ public class PetManager {
         }
     }
 
-    public void addPet(Pet p) {
+    public void addPet(String name, String species, String breed, int age, String temperament, int shelterID) {
+        Pet p = new Pet(this.nextId, name, species, breed, age, temperament, shelterID);
         this.pets.add(p);
         savePets();
     }
@@ -59,8 +62,26 @@ public class PetManager {
         return new ArrayList<>(this.pets);
     }
 
+    private void reseed() {
+        int max = pets.stream().mapToInt(Pet::getID).max().orElse(0);
+        if (nextId <= max) this.nextId = max + 1;
+    }
+
     public List<Pet> getAvailable() {
         return this.pets.stream().filter(p -> p.isAvailable()).collect(Collectors.toList());
+    }
+
+    public List<Pet> getAvailableFrom(List<Pet> pets) {
+        return pets.stream().filter(p -> p.isAvailable()).collect(Collectors.toList());
+    }
+
+    public void updatePet(Pet pet, String name, String species, String breed, int age, String temperament) {
+        pet.changeName(name);
+        pet.changeSpecies(species);
+        pet.changeBreed(breed);
+        pet.changeAge(age);
+        pet.changeTemperament(temperament);
+        savePets();
     }
 
     public boolean updateStatus(int petId, String newStatus) {
@@ -83,7 +104,7 @@ public class PetManager {
         return pets.stream().filter(p -> p.getShelterID() == shelterId).collect(Collectors.toList());
     }
 
-    public List<Pet> search(String species, String breed, int minAge, int maxAge, String temperament) {
+    public List<Pet> search(List<Pet> pets, String species, String breed, int minAge, int maxAge, String temperament) {
         boolean useMin = (minAge >= 0);
         boolean useMax = (maxAge >= 0);
 

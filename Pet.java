@@ -1,7 +1,6 @@
 import java.io.Serializable; 
 
 public class Pet implements Serializable {
-    private static int nextId = 0;
     private int petID;
     private String name;
     private String species;
@@ -11,8 +10,8 @@ public class Pet implements Serializable {
     private String status;
     private int shelterID;
 
-    public Pet(String name, String species, String breed, int age, String temperament, int shelterID) {
-        this.petID = nextId++;
+    public Pet(int id, String name, String species, String breed, int age, String temperament, int shelterID) {
+        this.petID = id;
         this.name = name;
         this.species = species;
         this.breed = breed;
@@ -83,7 +82,7 @@ public class Pet implements Serializable {
     }
 
     public boolean isAvailable() {
-        if (this.status.equals("Available")) return true;
+        if (this.status.equalsIgnoreCase("Available")) return true;
         return false;
     }
 }

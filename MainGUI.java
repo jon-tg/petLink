@@ -7,18 +7,20 @@ public class MainGUI {
     private UserManager userManager;
     private PetManager petManager;
     private ShelterManager shelterManager;
+    private ApplicationManager applicationManager;
 
-    public MainGUI (UserManager userManager, PetManager petManager, ShelterManager shelterManager) {
+    public MainGUI(UserManager userManager, PetManager petManager, ShelterManager shelterManager, ApplicationManager applicationManager) {
         this.userManager = userManager;
         this.petManager = petManager;
         this.shelterManager = shelterManager;
+        this.applicationManager = applicationManager;
         SwingUtilities.invokeLater(this:: initialize);
     }
 
     private void initialize() {
         this.frame = new JFrame("PetLink - Main Menu");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setSize(700, 450);
+        this.frame.setSize(700, 470);
         this.frame.setLayout(new BorderLayout());
 
         // Holds frame's main text
@@ -161,8 +163,8 @@ public class MainGUI {
                 return;
             }
 
-            Shelter newShelter = new Shelter(name, address, state);
-            shelterManager.addShelter(newShelter);
+            shelterManager.addShelter(name, address, state);
+            Shelter newShelter = shelterManager.findByName(name);
             JOptionPane.showMessageDialog(this.frame, "SHELTER JOIN CODE: " + newShelter.getJoinCode());
             System.out.println(newShelter.getJoinCode());
         }
@@ -202,8 +204,16 @@ public class MainGUI {
             User login = userManager.login(email, password);
             if (login != null ) {
                 JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName().toUpperCase());
-                UserGUI userDashboard = new UserGUI(login, userManager, petManager, shelterManager);
-                frame.setContentPane(userDashboard);
+                
+                if (login instanceof FosterUser fu) {
+                    UserGUI userDashboard = new UserGUI(fu, userManager, petManager, shelterManager, applicationManager);
+                    frame.setContentPane(userDashboard);
+
+                } else if (login instanceof ShelterStaff su) {
+                    StaffGUI staffDashboard = new StaffGUI(su, userManager, petManager, shelterManager, applicationManager);
+                    frame.setContentPane(staffDashboard);
+                }
+
                 frame.revalidate();
                 frame.repaint();
             } 

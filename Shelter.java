@@ -3,15 +3,14 @@ import java.util.*;
 import java.io.Serializable;
 
 public class Shelter implements Serializable {
-    private static int nextId = 0;
     private int shelterID;
     private String joinCode;
     private String name;
     private String address;
     private String state;
 
-    public Shelter(String name, String address, String state) {
-        this.shelterID = this.nextId++;
+    public Shelter(int id, String name, String address, String state) {
+        this.shelterID = id;
         this.joinCode = genRandomJoinCode();
         this.name = name;
         this.address = address;

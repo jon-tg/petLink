@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 public class UserManager {
     // dataFile stores user login credentials
     private File dataFile = new File("data/users.ser");
+    private int nextId = 1;
     private List<User> users;
 
     public UserManager() {
@@ -15,6 +16,7 @@ public class UserManager {
     private List<User> loadUsers() {
         if (!this.dataFile.exists() || dataFile.length() == 0) return new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.dataFile))) {
+            reseed();
             return (List<User>) in.readObject();
         }
         catch (Exception e) {
@@ -38,9 +40,15 @@ public class UserManager {
         }
     }
 
+    private void reseed() {
+        int max = users.stream().mapToInt(User::getID).max().orElse(0);
+        if (nextId <= max) this.nextId = max + 1;
+    }
+
     public boolean addUser(User u) {
-        if (u == null || u.getEmail() == null || u.getPassword() == null) return false;
+        if (u == null || u.getName() == null || u.getEmail() == null || u.getPassword() == null) return false;
         if (emailExists(u.getEmail())) return false; // Email cannot be in use already
+        u.setID(this.nextId);
         this.users.add(u);
         saveUsers();
         return true;

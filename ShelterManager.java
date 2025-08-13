@@ -3,6 +3,7 @@ import java.util.*;
 
 public class ShelterManager {
     private File dataFile = new File("data/shelters.ser");
+    private int nextId = 1;
     private List<Shelter> shelters;
 
     public ShelterManager() {
@@ -13,6 +14,7 @@ public class ShelterManager {
     private List<Shelter> loadShelters() {
         if (!this.dataFile.exists() || dataFile.length() == 0) return new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.dataFile))) {
+            reseed();
             return (List<Shelter>) in.readObject();
         }
         catch (Exception e) {
@@ -35,9 +37,15 @@ public class ShelterManager {
         }
     }
 
-    public void addShelter(Shelter shelter) {
-        this.shelters.add(shelter);
+    public void addShelter(String name, String address, String state) {
+        Shelter s = new Shelter(nextId++, name, address, state);
+        shelters.add(s);
         saveShelters();
+    }
+
+    private void reseed() {
+        int max = shelters.stream().mapToInt(Shelter::getShelterID).max().orElse(0);
+        if (nextId <= max) this.nextId = max + 1;
     }
 
     public Shelter findById(int id) {
@@ -50,6 +58,13 @@ public class ShelterManager {
     public Shelter findByJoinCode(String code) {
         for (Shelter s : shelters) {
             if (s.getJoinCode().equals(code)) return s;
+        }
+        return null;
+    }
+
+    public Shelter findByName(String name) {
+        for (Shelter s : shelters) {
+            if (s.getName().equals(name)) return s;
         }
         return null;
     }

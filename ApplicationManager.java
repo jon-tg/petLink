@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 public class ApplicationManager {
     // dataFile stores foster application data
     private File dataFile = new File("data/applications.ser");
+    private int nextId;
     private List<FosterApplication> applications;
 
     public ApplicationManager() {
@@ -37,9 +38,15 @@ public class ApplicationManager {
         }
     }
 
-    public void addApplication(FosterApplication app) {
+    public void addApplication(int petID, int userID, int shelterID) {
+        FosterApplication app = new FosterApplication(this.nextId, petID, userID, shelterID);
         this.applications.add(app);
         saveApplications();
+    }
+
+    private void reseed() {
+        int max = applications.stream().mapToInt(FosterApplication::getApplicationID).max().orElse(0);
+        if (nextId <= max) this.nextId = max + 1;
     }
 
     public boolean removeApplicationById(int applicationID) {
