@@ -1,6 +1,5 @@
 public class ShelterStaff extends User {
     private int parentShelterID;
-    private ShelterManager shelterManager;
     private PetManager petManager;
 
     public ShelterStaff(String email, String password, String name, int shelterID) {
@@ -19,7 +18,7 @@ public class ShelterStaff extends User {
     }
 
     public void addPet(Pet pet){
-      petManager.addPet(pet);
+        petManager.addPet(pet);
     }
 
     // public void editPet(Pet pet){
@@ -29,8 +28,4 @@ public class ShelterStaff extends User {
     public void removePet(Pet pet){
         petManager.removePetById(pet.getID());
     }
-
-
-
-
 }

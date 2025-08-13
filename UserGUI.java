@@ -22,9 +22,9 @@ public class UserGUI extends JPanel {
     }
 
     private JComponent buildHeader() {
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-        p.setBorder(BorderFactory.createEmptyBorder(16, 16, 8, 16));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(16, 16, 8, 16));
 
         JLabel title = new JLabel("WELCOME, " + currentUser.getName().toUpperCase(), SwingConstants.LEFT);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
@@ -34,9 +34,9 @@ public class UserGUI extends JPanel {
         sub.setForeground(new Color(110, 100, 110));
         sub.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        p.add(title);
-        p.add(sub);
-        return p;
+        panel.add(title);
+        panel.add(sub);
+        return panel;
     }
 
     private JComponent buildMenu() {
@@ -55,12 +55,71 @@ public class UserGUI extends JPanel {
         }
 
         viewShelters.addActionListener(e -> viewShelters());
-
+        changeLogin.addActionListener(e -> openChangeLoginForm());
+        logout.addActionListener(e -> logout());
         return center;
     }
 
+    private void openChangeLoginForm() {
+        String[] actions = {"EMAIL", "PASSWORD"};
+        String action = (String) JOptionPane.showInputDialog(this, "CHANGE: ", "CHANGE LOGIN", JOptionPane.PLAIN_MESSAGE, null, actions, actions[0]);
+        if (action == null) return;
+
+        JTextField emailField = new JTextField(15);
+        JPasswordField newPasswordField = new JPasswordField(15);
+        JPasswordField confirmPasswordField = new JPasswordField(15);
+
+        Object[] message;
+
+        if ("EMAIL".equals(action)) {
+            message = new Object[] {
+                "NEW EMAIL:", emailField
+            };
+        } else { 
+            message = new Object[] {
+                "NEW PASSWORD:", newPasswordField,
+                "CONFIRM PASSWORD:", confirmPasswordField
+            };
+        }
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                message,
+                action,
+                JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (option != JOptionPane.OK_OPTION) return;
+
+        if ("EMAIL".equals(action)) {
+            String newEmail = emailField.getText().trim();
+            if (newEmail.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "EMAIL CANNOT BE EMPTY", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            userManager.changeUserEmail(this.currentUser.getID(), newEmail);
+            JOptionPane.showMessageDialog(this, "EMAIL UPDATED");
+            logout();
+        } else {
+            String newPass = new String(newPasswordField.getPassword());
+            String confirm = new String(confirmPasswordField.getPassword());
+
+            if (newPass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "PASS CANNOT BE EMPTY", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!newPass.equals(confirm)) {
+                JOptionPane.showMessageDialog(this, "PASSWORDS DO NOT MATCH", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            userManager.changeUserPassword(this.currentUser.getID(), newPass);
+            JOptionPane.showMessageDialog(this, "PASSWORD UPDATE");
+            logout();
+        }
+    }
+
     private void viewShelters() {
-        JFrame f = new JFrame("Shelters");
+        JFrame f = new JFrame("SHELTERS");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JPanel container = new JPanel(new BorderLayout(10, 10));
@@ -123,5 +182,15 @@ public class UserGUI extends JPanel {
         }
         container.revalidate();
         container.repaint();
+    }
+
+    private void logout() {
+        Window window = SwingUtilities.getWindowAncestor(UserGUI.this);
+        // Closes the window
+        if (window != null) {
+            window.dispose();
+        }
+        // Show MainGUI again
+        SwingUtilities.invokeLater(() -> new MainGUI(userManager, petManager, shelterManager));
     }
 }

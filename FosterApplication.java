@@ -3,35 +3,35 @@ import java.io.Serializable;
 
 public class FosterApplication implements Serializable {
     private static int nextId = 0;
-    private String applicationId;
-    private String petId;
-    private String userId;
-    private String shelterId;
+    private int applicationId;
+    private int petId;
+    private int userId;
+    private int shelterId;
     private String status; // can be Pending, Approved, or Rejected
     private LocalDateTime timestamp;
 
     public FosterApplication(int petID, int userID, int shelterID) {
-        this.applicationId = Integer.toString(nextId++);
-        this.petId = Integer.toString(petID);
-        this.userId = Integer.toString(userID);
-        this.shelterId = Integer.toString(shelterID);
+        this.applicationId = nextId++;
+        this.petId = petID;
+        this.userId = userID;
+        this.shelterId = shelterID;
         this.status = "Pending";
         this.timestamp = LocalDateTime.now();
     }
 
-    public String getApplicationID() {
+    public int getApplicationID() {
         return this.applicationId;
     }
 
-    public String getPetId() {
+    public int getPetId() {
         return this.petId;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return this.userId;
     }
 
-    public String getShelterId() {
+    public int getShelterId() {
         return this.shelterId;
     }
 
