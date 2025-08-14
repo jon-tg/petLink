@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.text.View;
+
 import java.awt.*;
 import java.util.List;
 
@@ -107,131 +109,8 @@ public class StaffGUI extends JPanel {
 
     @SuppressWarnings("unused")
     private void viewPets() {
-        JFrame f = new JFrame("PETS");
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JPanel container = new JPanel(new BorderLayout(10, 10));
-        container.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
-
-        JLabel title = new JLabel("BROWSE PETS", SwingConstants.LEFT);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        container.add(title, BorderLayout.NORTH);
-
-        // Card container
-        JPanel cards = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
-        JScrollPane scroll = new JScrollPane(cards);
-        container.add(scroll, BorderLayout.CENTER);
-
-        JButton refreshBtn = new JButton("Refresh");
-        JButton closeBtn   = new JButton("Close");
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
-        controls.add(refreshBtn);
-        controls.add(closeBtn);
-        container.add(controls, BorderLayout.SOUTH);
-
-        refreshBtn.addActionListener(e -> loadPetCards(cards));
-        closeBtn.addActionListener(e -> f.dispose());
-
-        loadPetCards(cards);
-
-        f.setContentPane(container);
-        f.setSize(820, 520);
-        f.setVisible(true);
-    }
-
-    private void loadPetCards(JPanel container) {
-        container.removeAll();
-        List<Pet> pets = petManager.searchByShelter(currentUser.getParentShelterID());
-
-        if (pets.isEmpty()) {
-            JLabel empty = new JLabel("NO PETS FOUND");
-            empty.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-            container.add(empty);
-        } else {
-            for (Pet p : pets) {
-                container.add(makePetCard(p, () -> loadPetCards(container)));
-            }
-        }
-
-        container.revalidate();
-        container.repaint();
-    }
-
-    // Helper to build a pet card
-    @SuppressWarnings("unused")
-    private JComponent makePetCard(Pet p, Runnable afterSave) {
-        JPanel card = new JPanel();
-        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(210,210,210)),
-            BorderFactory.createEmptyBorder(10,12,10,12)
-        ));
-        card.setPreferredSize(new Dimension(240, 160));
-
-        JLabel name = new JLabel(p.getName().toUpperCase());
-        name.setFont(new Font("Segoe UI", Font.BOLD, 16));
-
-        // Smaller labels
-        JLabel species = new JLabel("SPECIES: " + p.getSpecies());
-        species.setForeground(new Color(90,90,90));
-        JLabel breed = new JLabel("BREED: " + p.getBreed());
-        breed.setForeground(new Color(90,90,90));
-        JLabel age = new JLabel("AGE: " + p.getAge());
-        age.setForeground(new Color(90,90,90));
-        JLabel temper = new JLabel("TEMPERAMENT: " + p.getTemperament());
-        temper.setForeground(new Color(90,90,90));
-        JLabel status = new JLabel("STATUS: " + p.getStatus());
-        status.setForeground(new Color(120,90,90));
-
-        JButton editBtn = new JButton("EDIT");
-        editBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        editBtn.addActionListener(e -> openEditPetDialog(p, afterSave));
-
-        name.setAlignmentX(Component.LEFT_ALIGNMENT);
-        species.setAlignmentX(Component.LEFT_ALIGNMENT);
-        breed.setAlignmentX(Component.LEFT_ALIGNMENT);
-        age.setAlignmentX(Component.LEFT_ALIGNMENT);
-        temper.setAlignmentX(Component.LEFT_ALIGNMENT);
-        status.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        card.add(name);
-        card.add(Box.createVerticalStrut(2));
-        card.add(species);
-        card.add(breed);
-        card.add(age);
-        card.add(temper);
-        card.add(status);
-        card.add(Box.createVerticalStrut(4));
-        card.add(editBtn);
-
-        return card;
-    }
-
-    private void openEditPetDialog(Pet pet, Runnable afterSave) {
-        JTextField nameField = new JTextField(pet.getName(), 15);
-        JTextField speciesField = new JTextField(pet.getSpecies(), 15);
-        JTextField breedField = new JTextField(pet.getBreed(), 15);
-        JTextField ageField = new JTextField(String.valueOf(pet.getAge()), 15);
-        JTextField temperamentField = new JTextField(pet.getTemperament(), 15);
-        JComboBox<String> statusBox = new JComboBox<>(new String[]{"AVAILABLE", "ADOPTED"});
-        statusBox.setSelectedItem(pet.getStatus());
-
-        Object[] msg = new Object[]{
-                "NAME:", nameField,
-                "SPECIES:", speciesField,
-                "BREED:", breedField,
-                "AGE:", ageField,
-                "TEMPERAMENT:", temperamentField,
-                "STATUS:", statusBox
-        };
-
-        int option = JOptionPane.showConfirmDialog(this, msg, "EDIT: " + pet.getName().toUpperCase(), JOptionPane.OK_CANCEL_OPTION);
-
-        if (option != JOptionPane.OK_OPTION) return;
-
-        petManager.updatePet(pet, nameField.getText(), speciesField.getText(), breedField.getText(), Integer.parseInt(ageField.getText()), temperamentField.getText());
-        JOptionPane.showMessageDialog(this, "PET UPDATED");
-        if (afterSave != null) afterSave.run();
+        ViewPetsGUI viewPetsGUI = new ViewPetsGUI(this, currentUser, petManager, shelterManager, applicationManager, this);
+        viewPetsGUI.showDialog();
     }
 
     @SuppressWarnings("unused")
