@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewPetsGUI {
@@ -25,12 +26,10 @@ public class ViewPetsGUI {
         JPanel container = new JPanel(new BorderLayout(10, 10));
         container.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
 
-        // Header
         JLabel title = new JLabel("BROWSE AVAILABLE PETS", SwingConstants.LEFT);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         container.add(title, BorderLayout.NORTH);
 
-        // Pet cards container
         JPanel cardsPanel = new JPanel();
         cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 8));
         JScrollPane scrollPane = new JScrollPane(cardsPanel);
@@ -38,7 +37,6 @@ public class ViewPetsGUI {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         container.add(scrollPane, BorderLayout.CENTER);
 
-        // Control buttons
         JButton refreshButton = new JButton("Refresh");
         JButton closeButton = new JButton("Close");
         JPanel controlsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
@@ -46,11 +44,9 @@ public class ViewPetsGUI {
         controlsPanel.add(closeButton);
         container.add(controlsPanel, BorderLayout.SOUTH);
 
-        // Event listeners
         refreshButton.addActionListener(e -> loadPetCards(cardsPanel));
         closeButton.addActionListener(e -> frame.dispose());
 
-        // Load initial pet cards
         loadPetCards(cardsPanel);
 
         frame.setContentPane(container);
@@ -61,7 +57,7 @@ public class ViewPetsGUI {
 
     private void loadPetCards(JPanel container) {
         container.removeAll();
-        List<Pet> availablePets = petManager.getAvailable(); // Using the correct method name
+        List<Pet> availablePets = petManager.getAvailable();
 
         if (availablePets == null || availablePets.isEmpty()) {
             JLabel emptyLabel = new JLabel("NO PETS AVAILABLE FOR ADOPTION");
@@ -89,13 +85,11 @@ public class ViewPetsGUI {
         card.setPreferredSize(new Dimension(280, 220));
         card.setMaximumSize(new Dimension(280, 220));
 
-        // Pet name (header)
         JLabel nameLabel = new JLabel(pet.getName().toUpperCase());
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         nameLabel.setForeground(new Color(60, 60, 60));
         nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Pet details
         JLabel speciesLabel = new JLabel("SPECIES: " + pet.getSpecies().toUpperCase());
         speciesLabel.setForeground(new Color(90, 90, 90));
         speciesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -112,20 +106,17 @@ public class ViewPetsGUI {
         temperamentLabel.setForeground(new Color(90, 90, 90));
         temperamentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Shelter information
         Shelter shelter = shelterManager.findById(pet.getShelterID());
         String shelterName = (shelter != null) ? shelter.getName() : "Unknown Shelter";
         JLabel shelterLabel = new JLabel("SHELTER: " + shelterName.toUpperCase());
         shelterLabel.setForeground(new Color(90, 90, 90));
         shelterLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Apply button
         JButton applyButton = new JButton("APPLY TO ADOPT");
         applyButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         applyButton.setMaximumSize(new Dimension(200, 30));
         applyButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
         
-        // Check if user has already applied for this pet
         boolean hasApplied = hasUserAppliedForPet(currentUser.getID(), pet.getID());
         if (hasApplied) {
             applyButton.setEnabled(false);
@@ -145,7 +136,6 @@ public class ViewPetsGUI {
             }
         });
 
-        // Add components to card
         card.add(nameLabel);
         card.add(Box.createVerticalStrut(8));
         card.add(speciesLabel);
@@ -167,8 +157,8 @@ public class ViewPetsGUI {
 
     private void handlePetApplication(Pet pet, Runnable refreshCallback) {
         try {
-            // Create and submit application using the correct ApplicationManager method
             applicationManager.addApplication(pet.getID(), currentUser.getID(), pet.getShelterID());
+            petManager.updateStatus(pet.getID(), "Pending");
             
             JOptionPane.showMessageDialog(
                 parentComponent,
@@ -177,7 +167,6 @@ public class ViewPetsGUI {
                 JOptionPane.INFORMATION_MESSAGE
             );
             
-            // Refresh the pet cards to update button states
             refreshCallback.run();
             
         } catch (Exception e) {
