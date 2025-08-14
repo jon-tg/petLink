@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
@@ -41,6 +40,7 @@ public class StaffGUI extends JPanel {
         return panel;
     }
 
+    @SuppressWarnings("unused")
     private JComponent buildMenu() {
         JPanel center = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
@@ -68,61 +68,8 @@ public class StaffGUI extends JPanel {
     }
 
     private void openChangeLoginForm() {
-        String[] actions = {"EMAIL", "PASSWORD"};
-        String action = (String) JOptionPane.showInputDialog(this, "CHANGE: ", "CHANGE LOGIN", JOptionPane.PLAIN_MESSAGE, null, actions, actions[0]);
-        if (action == null) return;
-
-        JTextField emailField = new JTextField(15);
-        JPasswordField newPasswordField = new JPasswordField(15);
-        JPasswordField confirmPasswordField = new JPasswordField(15);
-
-        Object[] message;
-
-        if ("EMAIL".equals(action)) {
-            message = new Object[] {
-                "NEW EMAIL:", emailField
-            };
-        } else { 
-            message = new Object[] {
-                "NEW PASSWORD:", newPasswordField,
-                "CONFIRM PASSWORD:", confirmPasswordField
-            };
-        }
-
-        int option = JOptionPane.showConfirmDialog(
-                this,
-                message,
-                action,
-                JOptionPane.OK_CANCEL_OPTION
-        );
-
-        if (option != JOptionPane.OK_OPTION) return;
-
-        if ("EMAIL".equals(action)) {
-            String newEmail = emailField.getText().trim();
-            if (newEmail.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "EMAIL CANNOT BE EMPTY", "ERROR", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            userManager.changeUserEmail(this.currentUser.getID(), newEmail);
-            JOptionPane.showMessageDialog(this, "EMAIL UPDATED");
-            logout();
-        } else {
-            String newPass = new String(newPasswordField.getPassword());
-            String confirm = new String(confirmPasswordField.getPassword());
-
-            if (newPass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "PASS CANNOT BE EMPTY", "ERROR", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (!newPass.equals(confirm)) {
-                JOptionPane.showMessageDialog(this, "PASSWORDS DO NOT MATCH", "ERROR", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            userManager.changeUserPassword(this.currentUser.getID(), newPass);
-            JOptionPane.showMessageDialog(this, "PASSWORD UPDATE");
-            logout();
-        }
+        ChangeLoginGUI changeLoginGUI = new ChangeLoginGUI(this, userManager,currentUser);
+        changeLoginGUI.showDialog();
     }
 
     private void openAddPetForm() {
@@ -158,6 +105,7 @@ public class StaffGUI extends JPanel {
         JOptionPane.showMessageDialog(this, "PET ADDED");
     }
 
+    @SuppressWarnings("unused")
     private void viewPets() {
         JFrame f = new JFrame("PETS");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -210,6 +158,7 @@ public class StaffGUI extends JPanel {
     }
 
     // Helper to build a pet card
+    @SuppressWarnings("unused")
     private JComponent makePetCard(Pet p, Runnable afterSave) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -285,6 +234,7 @@ public class StaffGUI extends JPanel {
         if (afterSave != null) afterSave.run();
     }
 
+    @SuppressWarnings("unused")
     private void viewApplications() {
         JFrame f = new JFrame("APPLICATIONS");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -336,6 +286,7 @@ public class StaffGUI extends JPanel {
         container.repaint();
     }
 
+    @SuppressWarnings("unused")
     private JComponent makeApplicationCard(FosterApplication app, Runnable afterSave) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));

@@ -26,6 +26,7 @@ public class ViewApplicationsGUI {
         this.applicationManager = am;
     }
 
+    @SuppressWarnings("unused")
     public void showApplicationsGUI() {
         JFrame f = new JFrame("APPLICATIONS");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class MainGUI {
     private JFrame frame;
@@ -17,6 +16,7 @@ public class MainGUI {
         SwingUtilities.invokeLater(this:: initialize);
     }
 
+    @SuppressWarnings("unused")
     private void initialize() {
         this.frame = new JFrame("PetLink - Main Menu");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

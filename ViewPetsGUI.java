@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewPetsGUI {
@@ -19,6 +18,7 @@ public class ViewPetsGUI {
         this.applicationManager = applicationManager;
     }
 
+    @SuppressWarnings("unused")
     public void showDialog() {
         JFrame frame = new JFrame("BROWSE PETS");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -75,6 +75,7 @@ public class ViewPetsGUI {
         container.repaint();
     }
 
+    @SuppressWarnings("unused")
     private JComponent createPetCard(Pet pet, Runnable refreshCallback) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));

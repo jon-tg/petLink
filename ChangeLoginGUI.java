@@ -4,14 +4,12 @@ import java.awt.*;
 public class ChangeLoginGUI {
     private final Component parentComponent;
     private final UserManager userManager;
-    private final FosterUser currentUser;
-    private final Runnable onUpdateCallback;
+    private final User currentUser;
 
-    public ChangeLoginGUI(Component parentComponent, UserManager userManager, FosterUser currentUser, Runnable onUpdateCallback) {
+    public ChangeLoginGUI(Component parentComponent, UserManager userManager, User currentUser) {
         this.parentComponent = parentComponent;
         this.userManager = userManager;
         this.currentUser = currentUser;
-        this.onUpdateCallback = onUpdateCallback;
     }
 
     public void showDialog() {

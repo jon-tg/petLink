@@ -1,9 +1,6 @@
 import javax.swing.*;
-import javax.swing.text.View;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserGUI extends JPanel {
     private final FosterUser currentUser;
@@ -42,6 +39,7 @@ public class UserGUI extends JPanel {
         return panel;
     }
 
+    @SuppressWarnings("unused")
     private JComponent buildMenu() {
         JPanel center = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         JButton browsePets = new JButton("BROWSE PETS");
@@ -66,7 +64,7 @@ public class UserGUI extends JPanel {
     }
 
     private void openChangeLoginForm() {
-        ChangeLoginGUI changeLoginGUI = new ChangeLoginGUI(this, userManager, currentUser, this::logout);
+        ChangeLoginGUI changeLoginGUI = new ChangeLoginGUI(this, userManager, currentUser);
         changeLoginGUI.showDialog();
     }
 

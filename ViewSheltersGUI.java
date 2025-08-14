@@ -9,7 +9,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.text.View;
 
 import java.awt.*;
 
@@ -20,6 +19,7 @@ public class ViewSheltersGUI {
         this.shelterManager = shelterManager;
     }
 
+    @SuppressWarnings("unused")
     public void showSheltersGUI() {
         JFrame f = new JFrame("SHELTERS");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
