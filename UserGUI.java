@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
 
 public class UserGUI extends JPanel {
@@ -64,8 +65,61 @@ public class UserGUI extends JPanel {
     }
 
     private void openChangeLoginForm() {
-        ChangeLoginGUI changeLoginGUI = new ChangeLoginGUI(this, userManager, currentUser, this::logout);
-        changeLoginGUI.showDialog();
+        String[] actions = {"EMAIL", "PASSWORD"};
+        String action = (String) JOptionPane.showInputDialog(this, "CHANGE: ", "CHANGE LOGIN", JOptionPane.PLAIN_MESSAGE, null, actions, actions[0]);
+        if (action == null) return;
+
+        JTextField emailField = new JTextField(15);
+        JPasswordField newPasswordField = new JPasswordField(15);
+        JPasswordField confirmPasswordField = new JPasswordField(15);
+
+        Object[] message;
+
+        if ("EMAIL".equals(action)) {
+            message = new Object[] {
+                "NEW EMAIL:", emailField
+            };
+        } else { 
+            message = new Object[] {
+                "NEW PASSWORD:", newPasswordField,
+                "CONFIRM PASSWORD:", confirmPasswordField
+            };
+        }
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                message,
+                action,
+                JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (option != JOptionPane.OK_OPTION) return;
+
+        if ("EMAIL".equals(action)) {
+            String newEmail = emailField.getText().trim();
+            if (newEmail.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "EMAIL CANNOT BE EMPTY", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            userManager.changeUserEmail(this.currentUser.getID(), newEmail);
+            JOptionPane.showMessageDialog(this, "EMAIL UPDATED");
+            logout();
+        } else {
+            String newPass = new String(newPasswordField.getPassword());
+            String confirm = new String(confirmPasswordField.getPassword());
+
+            if (newPass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "PASS CANNOT BE EMPTY", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!newPass.equals(confirm)) {
+                JOptionPane.showMessageDialog(this, "PASSWORDS DO NOT MATCH", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            userManager.changeUserPassword(this.currentUser.getID(), newPass);
+            JOptionPane.showMessageDialog(this, "PASSWORD UPDATE");
+            logout();
+        }
     }
 
     private void viewShelters() {
@@ -320,7 +374,6 @@ public class UserGUI extends JPanel {
         l.setForeground(new Color(90,90,90));
         return l;
     }
-
 
     private void viewApplications() {
         JFrame f = new JFrame("APPLICATIONS");
