@@ -1,6 +1,8 @@
 import javax.swing.*;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserGUI extends JPanel {
     private final FosterUser currentUser;
@@ -74,8 +76,190 @@ public class UserGUI extends JPanel {
     }
 
     private void viewPets() {
-        ViewPetsGUI viewPetsGUI = new ViewPetsGUI(this, currentUser, petManager, shelterManager, applicationManager);
-        viewPetsGUI.showDialog();
+        List<Shelter> shelters = shelterManager.getAll();
+        List<String> options = new ArrayList<>();
+        
+        // Search shelters with available pets
+        for (Shelter s : shelters) {
+            List<Pet> byShelter = petManager.searchByShelter(s.getShelterID());
+            List<Pet> avail = petManager.getAvailableFrom(byShelter);
+            if (!avail.isEmpty()) {
+                options.add(s.getName());
+            }
+        }
+        if (options.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "NO SHELTERS WITH PETS");
+            return;
+        }
+        String[] names = options.toArray(new String[0]);
+        String c = (String) JOptionPane.showInputDialog(this, "CHOOSE A SHELTER: ", "SELECT SHELTER", JOptionPane.QUESTION_MESSAGE, null, names, names[0]);
+        if (c == null) return;
+        Shelter choice = shelterManager.findByName(c);
+        int shelterId = choice.getShelterID();
+
+        JFrame f = new JFrame("PETS");
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel container = new JPanel(new BorderLayout(10, 10));
+        container.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
+        JLabel title = new JLabel(("BROWSE PETS — " + choice.getName()).toUpperCase(), SwingConstants.LEFT);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        container.add(title, BorderLayout.NORTH);
+
+        JPanel filters = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        JTextField speciesField = new JTextField(10);
+        JTextField breedField = new JTextField(10);
+        JTextField temperField = new JTextField(10);
+        JTextField minAgeField = new JTextField(4);
+        JTextField maxAgeField = new JTextField(4);
+
+        filters.add(new JLabel("Species:"));     
+        filters.add(speciesField);
+        filters.add(new JLabel("Breed:"));       
+        filters.add(breedField);
+        filters.add(new JLabel("Temperament:")); 
+        filters.add(temperField);
+        filters.add(new JLabel("Age min:"));     
+        filters.add(minAgeField);
+        filters.add(new JLabel("Age max:"));     
+        filters.add(maxAgeField);
+
+        JPanel cards = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 8));
+        JScrollPane scroll = new JScrollPane(cards);
+
+        JPanel south = new JPanel(new BorderLayout(8, 8));
+        south.add(filters, BorderLayout.CENTER);
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        JButton searchBtn = new JButton("Search");
+        JButton refreshBtn = new JButton("Refresh");
+        JButton closeBtn = new JButton("Close");
+        actions.add(searchBtn);
+        actions.add(refreshBtn);
+        actions.add(closeBtn);
+        south.add(actions, BorderLayout.EAST);
+
+        container.add(scroll, BorderLayout.CENTER);
+        container.add(south, BorderLayout.SOUTH);
+
+        // Get results from search filters & shelter chosen
+        final Runnable load = new Runnable() {
+            @Override public void run() {
+                cards.removeAll();
+                List<Pet> base = petManager.getAvailableFrom(petManager.searchByShelter(shelterId));
+
+                int min = -1;
+                int max = -1;
+                try {
+                    String t = minAgeField.getText().trim();
+                    if (!t.isEmpty()) min = Integer.parseInt(t);
+                    t = maxAgeField.getText().trim();
+                    if (!t.isEmpty()) max = Integer.parseInt(t);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(UserGUI.this, "AGE MUST BE NUMBER");
+                    return;
+                }
+
+                String species = speciesField.getText().trim();
+                if (species.isEmpty()) species = null;
+                String breed = breedField.getText().trim();
+                if (breed.isEmpty()) breed = null;
+                String temper = temperField.getText().trim();
+                if (temper.isEmpty()) temper = null;
+
+                List<Pet> filtered = petManager.search(base, species, breed, min, max, temper);
+
+                if (filtered.isEmpty()) {
+                    JLabel empty = new JLabel("NO PETS FOUND");
+                    empty.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+                    cards.add(empty);
+                } else {
+                    for (Pet p : filtered) {
+                        cards.add(makePetCard(p, this));
+                    }
+                }
+                cards.revalidate();
+                cards.repaint();
+            }
+        };
+
+        searchBtn.addActionListener(e -> load.run());
+        refreshBtn.addActionListener(e -> {
+            speciesField.setText(""); 
+            breedField.setText(""); 
+            temperField.setText("");
+            minAgeField.setText(""); 
+            maxAgeField.setText("");
+            load.run();
+        });
+        closeBtn.addActionListener(e -> f.dispose());
+        load.run();
+        f.setContentPane(container);
+        f.setSize(880, 580);
+        f.setLocationByPlatform(true);
+        f.setVisible(true);
+    }
+
+    private JComponent makePetCard(Pet p, Runnable afterApply) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(210,210,210)),
+                BorderFactory.createEmptyBorder(10,12,10,12)
+        ));
+        card.setPreferredSize(new Dimension(240, 180));
+
+        JLabel name = new JLabel((p.getName() == null ? "" : p.getName()).toUpperCase());
+        name.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        JLabel species = smallGray("SPECIES: " + p.getSpecies());
+        JLabel breed   = smallGray("BREED: "   + p.getBreed());
+        JLabel age     = smallGray("AGE: "     + p.getAge());
+        JLabel temper  = smallGray("TEMPERAMENT: " + p.getTemperament());
+        JLabel status  = smallGray("STATUS: "  + p.getStatus());
+
+        JButton applyBtn = new JButton("APPLY TO FOSTER");
+        applyBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        applyBtn.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "SEND APPLICATION FOR: " + p.getName().toUpperCase() + "?",
+                    "CONFIRM",
+                    JOptionPane.OK_CANCEL_OPTION
+            );
+            if (confirm != JOptionPane.OK_OPTION) return;
+
+            try {
+                applicationManager.addApplication(p.getID(), currentUser.getID(), p.getShelterID());
+                JOptionPane.showMessageDialog(this, "APPLICATION SUBMITTED!");
+                p.changeStatus("Pending");
+                if (afterApply != null) afterApply.run();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "FAILED TO SUBMIT APPLICATION: " + ex.getMessage());
+            }
+        });
+
+        name.setAlignmentX(Component.LEFT_ALIGNMENT);
+        species.setAlignmentX(Component.LEFT_ALIGNMENT);
+        breed.setAlignmentX(Component.LEFT_ALIGNMENT);
+        age.setAlignmentX(Component.LEFT_ALIGNMENT);
+        temper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        status.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        card.add(name);
+        card.add(Box.createVerticalStrut(2));
+        card.add(species);
+        card.add(breed);
+        card.add(age);
+        card.add(temper);
+        card.add(status);
+        card.add(Box.createVerticalStrut(6));
+        card.add(applyBtn);
+        return card;
+    }
+
+    private JLabel smallGray(String text) {
+        JLabel l = new JLabel(text);
+        l.setForeground(new Color(90,90,90));
+        return l;
     }
 
     private void viewApplications() {
