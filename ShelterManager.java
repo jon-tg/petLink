@@ -8,13 +8,13 @@ public class ShelterManager {
 
     public ShelterManager() {
         this.shelters = loadShelters();
+        reseed();
     }
 
     @SuppressWarnings("unchecked")
     private List<Shelter> loadShelters() {
         if (!this.dataFile.exists() || dataFile.length() == 0) return new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.dataFile))) {
-            reseed();
             return (List<Shelter>) in.readObject();
         }
         catch (Exception e) {

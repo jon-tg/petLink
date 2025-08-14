@@ -10,13 +10,13 @@ public class UserManager {
 
     public UserManager() {
         this.users = loadUsers();
+        reseed();
     }
 
     @SuppressWarnings("unchecked")
     private List<User> loadUsers() {
         if (!this.dataFile.exists() || dataFile.length() == 0) return new ArrayList<>();
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(this.dataFile))) {
-            reseed();
             return (List<User>) in.readObject();
         }
         catch (Exception e) {

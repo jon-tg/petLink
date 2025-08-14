@@ -43,7 +43,7 @@ public class FosterApplication implements Serializable {
     }
 
     public void updateStatus(String newStatus) {
-        if (newStatus.equals("Pending") || newStatus.equals("Approved") || newStatus.equals("Rejected")) {
+        if (newStatus.equalsIgnoreCase("Pending") || newStatus.equalsIgnoreCase("Approved") || newStatus.equalsIgnoreCase("Rejected")) {
             this.status = newStatus;
         }
         else {

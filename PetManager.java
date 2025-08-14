@@ -5,11 +5,12 @@ import java.util.stream.Collectors;
 public class PetManager {
     // dataFile stores pet data
     private File dataFile = new File("data/pets.ser");
-    private int nextId;
+    private int nextId = 1;
     private List<Pet> pets;
 
     public PetManager() {
         this.pets = loadPets();
+        reseed();
     }
 
     @SuppressWarnings("unchecked")
@@ -31,7 +32,6 @@ public class PetManager {
         }
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(this.dataFile))) {
-            reseed();
             out.writeObject(this.pets);
         }
         catch (Exception e) {

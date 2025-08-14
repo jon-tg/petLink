@@ -5,11 +5,12 @@ import java.util.stream.Collectors;
 public class ApplicationManager {
     // dataFile stores foster application data
     private File dataFile = new File("data/applications.ser");
-    private int nextId;
+    private int nextId = 1;
     private List<FosterApplication> applications;
 
     public ApplicationManager() {
         this.applications = loadApplications();
+        reseed();
     }
 
     @SuppressWarnings("unchecked")
@@ -84,8 +85,8 @@ public class ApplicationManager {
                 .collect(Collectors.toList());
     }
 
-    public List<FosterApplication> getByStatus(String status) {
-        return this.applications.stream()
+    public List<FosterApplication> getByStatus(List<FosterApplication> applications, String status) {
+        return applications.stream()
                 .filter(a -> a.getStatus().equalsIgnoreCase(status))
                 .collect(Collectors.toList());
     }
