@@ -71,103 +71,11 @@ public class MainGUI {
 
         this.frame.add(buttonPanel, BorderLayout.CENTER);
 
-        registerButton.addActionListener(e -> openRegistrationForm());
-        loginButton.addActionListener(e -> openLoginForm());
-        registerShelterButton.addActionListener(e -> openShelterRegistrationForm());
+        registerButton.addActionListener(e -> UserRegistrationGUI.showUserRegistrationDialog(this.frame, userManager, shelterManager));
+        loginButton.addActionListener(e -> LoginGUI.showLoginDialog(frame, userManager, petManager, shelterManager, applicationManager));
+        registerShelterButton.addActionListener(e -> ShelterRegistrationGUI.showShelterRegistrationDialog(frame, shelterManager));
 
         this.frame.setVisible(true);
-    }
-
-    private void openRegistrationForm() {
-        String[] roles = {"PETLINK USER", "SHELTER STAFF"};
-        String role = (String) JOptionPane.showInputDialog(this.frame, "SELECT ROLE: ", "REGISTER ", JOptionPane.PLAIN_MESSAGE, null, roles, roles[0]);
-        if (role == null) return;
-
-        JTextField nameField = new JTextField(15);
-        JTextField emailField = new JTextField(15);
-        JPasswordField passwordField = new JPasswordField(15);
-        JTextField shelterIdField = new JTextField(15);
-
-        Object[] message = {
-            "NAME: ", nameField,
-            "EMAIL: ", emailField,
-            "PASSWORD: ", passwordField
-        };
-
-        if (role.equals("SHELTER STAFF")) {
-            message = new Object[] {
-                "NAME: ", nameField,
-                "EMAIL: ", emailField,
-                "PASSWORD: ", passwordField,
-                "SHELTER ID: ", shelterIdField
-            };
-        }
-
-        int option = JOptionPane.showConfirmDialog(this.frame, message, "REGISTER " + role, JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String name = nameField.getText();
-            String email = emailField.getText();
-            String password = new String(passwordField.getPassword());
-
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || role.equals("SHELTER STAFF") && (shelterIdField.getText().isEmpty() || shelterManager.findByJoinCode(shelterIdField.getText()) == null)) {
-                JOptionPane.showMessageDialog(this.frame, "MUST ENTER ALL REGISTRATION FIELDS!");
-                return;
-            }
-
-            User newUser;
-
-            if ("PETLINK USER".equals(role)) {
-                newUser = new FosterUser(email, password, name);
-            }
-
-            else  {
-                Shelter shelter = shelterManager.findByJoinCode(shelterIdField.getText());
-                newUser = new ShelterStaff(email, password, name, shelter.getShelterID());
-            }
-
-            boolean registered = userManager.addUser(newUser);
-
-            if (registered) {
-                JOptionPane.showMessageDialog(this.frame, role + " REGISTERED SUCCESSFULLY!");
-            }
-
-            else if ("PETLINK USER".equals(role)) {
-                JOptionPane.showMessageDialog(this.frame, "EMAIL IS REGISTERED WITH EXISTING USER.");
-            }
-
-            else {
-                JOptionPane.showMessageDialog(this.frame, "SHELTER ID DOES NOT MATCH ANY EXISTING SHELTERS.");
-            }
-        }
-    }
-
-    private void openShelterRegistrationForm() {
-        JTextField nameField = new JTextField(15);
-        JTextField addressField = new JTextField(15);
-        JTextField stateField = new JTextField(30);
-
-        Object[] message = {
-            "SHELTER NAME: ", nameField,
-            "ADDRESS: ", addressField,
-            "STATE: ", stateField
-        };
-
-        int option = JOptionPane.showConfirmDialog(this.frame, message, "REGISTER SHELTER", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String name = nameField.getText();
-            String address = addressField.getText();
-            String state = stateField.getText();
-
-            if (name.isEmpty() || address.isEmpty() || state.isEmpty()) {
-                JOptionPane.showMessageDialog(this.frame, "MUST ENTER ALL REGISTRATION FIELDS!");
-                return;
-            }
-
-            shelterManager.addShelter(name, address, state);
-            Shelter newShelter = shelterManager.findByName(name);
-            JOptionPane.showMessageDialog(this.frame, "SHELTER JOIN CODE: " + newShelter.getJoinCode());
-            System.out.println(newShelter.getJoinCode());
-        }
     }
 
     // Helper method to style buttons throughout GUIs 
@@ -184,43 +92,6 @@ public class MainGUI {
             btn.setIconTextGap(8);
             btn.setPreferredSize(new Dimension(140, 40));
             btn.setFocusPainted(false);
-        }
-    }
-
-    private void openLoginForm() {
-        JTextField emailField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
-
-        Object[] message = {
-            "EMAIL: ", emailField,
-            "PASSWORD: ", passwordField
-        };
-
-        int option = JOptionPane.showConfirmDialog(this.frame, message, "LOGIN", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String email = emailField.getText();
-            String password = new String(passwordField.getPassword());
-
-            User login = userManager.login(email, password);
-            if (login != null ) {
-                JOptionPane.showMessageDialog(this.frame, "LOGIN SUCCESSFUL! WELCOME " + login.getName().toUpperCase());
-                
-                if (login instanceof FosterUser fu) {
-                    UserGUI userDashboard = new UserGUI(fu, userManager, petManager, shelterManager, applicationManager);
-                    frame.setContentPane(userDashboard);
-
-                } else if (login instanceof ShelterStaff su) {
-                    StaffGUI staffDashboard = new StaffGUI(su, userManager, petManager, shelterManager, applicationManager);
-                    frame.setContentPane(staffDashboard);
-                }
-
-                frame.revalidate();
-                frame.repaint();
-            } 
-            else {
-                userManager.printAllUsers();
-                JOptionPane.showMessageDialog(this.frame, "INVALID EMAIL OR PASSWORD.");
-            }
         }
     }
 }
