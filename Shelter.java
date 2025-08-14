@@ -1,47 +1,62 @@
-
-import java.io.Serializable;
 import java.util.*;
+import java.io.Serializable;
 
-public class Shelter implements Serializable{
-
+public class Shelter implements Serializable {
     private int shelterID;
-    private List<Pet> petList;
+    private String joinCode;
     private String name;
-    private int nextID;
-    private List<FosterApplication> recievedApplications;
+    private String address;
+    private String state;
 
-    public Shelter() {
-        Random random = new Random();
-        this.shelterID = random.nextInt(9999-1000 + 1) + 1000; //create random 4 digit id 
+    public Shelter(int id, String name, String address, String state) {
+        this.shelterID = id;
+        this.joinCode = genRandomJoinCode();
+        this.name = name;
+        this.address = address;
+        this.state = state;
     }
-
+    
     public int getShelterID(){
         return this.shelterID;
     }
 
-    public List getPetList(){
-        return petList;
-    }
-    public void setPetList(List<Pet> pets ){
-        this.petList = pets;
+    public String getJoinCode() {
+        return this.joinCode;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public void setName(String name){
+    public String getAddress() {
+        return this.address;
+    }
+
+    public String getState() {
+        return this.state;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 
-    public List getApplications(){
-        return this.recievedApplications;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public void setApplications(List<FosterApplication> applications){
-        this.recievedApplications = applications;
+    public void setState(String state) {
+        this.state = state;
     }
 
+    private String genRandomJoinCode() {
+        String codeSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(6);
 
-
+        for (int i = 0; i < 6; i++) {
+            sb.append(codeSet.charAt(random.nextInt(codeSet.length())));
+        }
+        String joinCode = sb.toString();
+        return joinCode;
+    }
 }

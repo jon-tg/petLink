@@ -2,7 +2,6 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 public class FosterApplication implements Serializable {
-    private static int nextId = 0;
     private int applicationId;
     private int petId;
     private int userId;
@@ -10,8 +9,8 @@ public class FosterApplication implements Serializable {
     private String status; // can be Pending, Approved, or Rejected
     private LocalDateTime timestamp;
 
-    public FosterApplication(int petID, int userID, int shelterID) {
-        this.applicationId = nextId++;
+    public FosterApplication(int id, int petID, int userID, int shelterID) {
+        this.applicationId = id;
         this.petId = petID;
         this.userId = userID;
         this.shelterId = shelterID;
@@ -28,7 +27,7 @@ public class FosterApplication implements Serializable {
     }
 
     public int getUserId() {
-        return this.UserId;
+        return this.userId;
     }
 
     public int getShelterId() {
@@ -44,7 +43,7 @@ public class FosterApplication implements Serializable {
     }
 
     public void updateStatus(String newStatus) {
-        if (newStatus.equals("Pending") || newStatus.equals("Approved") || newStatus.equals("Rejected")) {
+        if (newStatus.equalsIgnoreCase("Pending") || newStatus.equalsIgnoreCase("Approved") || newStatus.equalsIgnoreCase("Rejected")) {
             this.status = newStatus;
         }
         else {

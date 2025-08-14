@@ -1,36 +1,16 @@
-
-
 public class ShelterStaff extends User {
+    private int parentShelterID;
 
-    private Shelter parentShelter;
-
-    public ShelterStaff(String email, String password, String name, int ShelterID) {
+    public ShelterStaff(String email, String password, String name, int shelterID) {
         super(email, password, name);
-        // TODO set parent shelter 
-        // need something for staff crededentials here
+        this.parentShelterID = shelterID;
     }
 
     public void viewDashboard() {
-        
+        System.out.println("Testing");
     }
 
-    public void addPet(Pet pet){
-
+    public int getParentShelterID() {
+        return this.parentShelterID;
     }
-
-    public void editPet(Pet pet){
-        
-    }
-
-    public void removePet(Pet pet){
-        
-    }
-
-    public List viewApplications(){
-
-    }
-
-
-
-
 }

@@ -4,10 +4,12 @@ import java.io.*;
 public class UserManager {
     // dataFile stores user login credentials
     private File dataFile = new File("data/users.ser");
+    private int nextId = 1;
     private List<User> users;
 
     public UserManager() {
         this.users = loadUsers();
+        reseed();
     }
 
     @SuppressWarnings("unchecked")
@@ -37,9 +39,15 @@ public class UserManager {
         }
     }
 
+    private void reseed() {
+        int max = users.stream().mapToInt(User::getID).max().orElse(0);
+        if (nextId <= max) this.nextId = max + 1;
+    }
+
     public boolean addUser(User u) {
-        if (u == null || u.getEmail() == null || u.getPassword() == null) return false;
+        if (u == null || u.getName() == null || u.getEmail() == null || u.getPassword() == null) return false;
         if (emailExists(u.getEmail())) return false; // Email cannot be in use already
+        u.setID(this.nextId++);
         this.users.add(u);
         saveUsers();
         return true;
@@ -103,8 +111,15 @@ public class UserManager {
         return new ArrayList<>(this.users);
     }
 
+    // For debugging
+    public void printAllUsers() {
+        for (User user : users) {
+            System.out.println(user.getName() + " "+ user.getEmail() + " " + user.getPassword());
+        }
+    }
+
     public User login(String email, String password) {
-        for(User u : this.users) {
+        for (User u : this.users) {
             if (email.equals(u.getEmail()) && password.equals(u.getPassword())) {
                 return u;
             }
