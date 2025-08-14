@@ -47,7 +47,7 @@ public class UserManager {
     public boolean addUser(User u) {
         if (u == null || u.getName() == null || u.getEmail() == null || u.getPassword() == null) return false;
         if (emailExists(u.getEmail())) return false; // Email cannot be in use already
-        u.setID(this.nextId);
+        u.setID(this.nextId++);
         this.users.add(u);
         saveUsers();
         return true;

@@ -280,8 +280,11 @@ public class CardStrategy {
 
     private void openDeletePetDialog(Pet pet, Runnable afterSave) {
         int confirm = JOptionPane.showConfirmDialog(cardContainer, "Are you sure you want to delete " + pet.getName() + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-
         if (confirm == JOptionPane.YES_OPTION) {
+            List<FosterApplication> apps = applicationManager.getByPet(pet.getID());
+            for (FosterApplication app: apps) {
+                applicationManager.removeApplicationById(app.getApplicationID());
+            }
             petManager.removePetById(pet.getID());
             JOptionPane.showMessageDialog(cardContainer, "PET DELETED");
             if (afterSave != null) afterSave.run();

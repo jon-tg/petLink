@@ -40,7 +40,7 @@ public class PetManager {
     }
 
     public void addPet(String name, String species, String breed, int age, String temperament, int shelterID) {
-        Pet p = new Pet(this.nextId, name, species, breed, age, temperament, shelterID);
+        Pet p = new Pet(this.nextId++, name, species, breed, age, temperament, shelterID);
         this.pets.add(p);
         savePets();
     }

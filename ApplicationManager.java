@@ -40,7 +40,7 @@ public class ApplicationManager {
     }
 
     public void addApplication(int petID, int userID, int shelterID) {
-        FosterApplication app = new FosterApplication(this.nextId, petID, userID, shelterID);
+        FosterApplication app = new FosterApplication(this.nextId++, petID, userID, shelterID);
         this.applications.add(app);
         saveApplications();
     }

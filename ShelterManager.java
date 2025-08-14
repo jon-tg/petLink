@@ -38,7 +38,7 @@ public class ShelterManager {
     }
 
     public void addShelter(String name, String address, String state) {
-        Shelter s = new Shelter(nextId++, name, address, state);
+        Shelter s = new Shelter(this.nextId++, name, address, state);
         shelters.add(s);
         saveShelters();
     }
