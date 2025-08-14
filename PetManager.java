@@ -46,6 +46,13 @@ public class PetManager {
     }
 
     public boolean removePetById(int petId) {
+        ApplicationManager applicationManager = new ApplicationManager();
+        List<FosterApplication> appsToRemove = applicationManager.getByPet(petId);
+        
+        for (FosterApplication app : appsToRemove) {
+            applicationManager.removeApplicationById(app.getApplicationID());
+        }   
+
         boolean removed = this.pets.removeIf(p -> p.getID() == petId);
         if (removed) savePets();
         return removed;

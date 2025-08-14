@@ -200,7 +200,7 @@ public class CardStrategy {
             BorderFactory.createLineBorder(new Color(210,210,210)),
             BorderFactory.createEmptyBorder(10,12,10,12)
         ));
-        card.setPreferredSize(new Dimension(240, 160));
+        card.setPreferredSize(new Dimension(240, 170));
 
         JLabel name = new JLabel(p.getName().toUpperCase());
         name.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -217,9 +217,19 @@ public class CardStrategy {
         JLabel status = new JLabel("STATUS: " + p.getStatus());
         status.setForeground(new Color(120,90,90));
 
+        JPanel center = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+
         JButton editBtn = new JButton("EDIT");
-        editBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        editBtn.setPreferredSize(new Dimension(80, 30));
         editBtn.addActionListener(e -> openEditPetDialog(p, afterSave));
+
+        JButton deleteBtn = new JButton("DELETE");
+        editBtn.setPreferredSize(new Dimension(80, 30));
+        deleteBtn.addActionListener(e -> openDeletePetDialog(p, afterSave));
+
+        center.add(editBtn);
+        center.add(deleteBtn);
+        center.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         name.setAlignmentX(Component.LEFT_ALIGNMENT);
         species.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -236,11 +246,10 @@ public class CardStrategy {
         card.add(temper);
         card.add(status);
         card.add(Box.createVerticalStrut(4));
-        card.add(editBtn);
+        card.add(center);
 
         return card;
     }
-
 
     private void openEditPetDialog(Pet pet, Runnable afterSave) {
         JTextField nameField = new JTextField(pet.getName(), 15);
@@ -267,5 +276,15 @@ public class CardStrategy {
         petManager.updatePet(pet, nameField.getText(), speciesField.getText(), breedField.getText(), Integer.parseInt(ageField.getText()), temperamentField.getText());
         JOptionPane.showMessageDialog(cardContainer, "PET UPDATED");
         if (afterSave != null) afterSave.run();
+    }
+
+    private void openDeletePetDialog(Pet pet, Runnable afterSave) {
+        int confirm = JOptionPane.showConfirmDialog(cardContainer, "Are you sure you want to delete " + pet.getName() + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            petManager.removePetById(pet.getID());
+            JOptionPane.showMessageDialog(cardContainer, "PET DELETED");
+            if (afterSave != null) afterSave.run();
+        }
     }
 }

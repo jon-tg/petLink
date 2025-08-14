@@ -27,7 +27,7 @@ public class AddPetGUI {
                 "TEMPERAMENT:", temperamentField,
         };
 
-        int option = JOptionPane.showConfirmDialog(this.parentGUI, msg, "ADD PET", JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(parentGUI, msg, "ADD PET", JOptionPane.OK_CANCEL_OPTION);
         if (option != JOptionPane.OK_OPTION) return;
 
         String name = nameField.getText();
@@ -37,11 +37,11 @@ public class AddPetGUI {
         String temperament = temperamentField.getText();
 
         if (name.isEmpty() || species.isEmpty() || breed.isEmpty() || age < 0 || temperament.isEmpty()) {
-            JOptionPane.showMessageDialog(this.parentGUI, "MUST ENTER ALL FIELDS", "ERROR", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentGUI, "MUST ENTER ALL FIELDS", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         petManager.addPet(name, species, breed, age, temperament, currentUser.getParentShelterID());
-        JOptionPane.showMessageDialog(this.parentGUI, "PET ADDED");
+        JOptionPane.showMessageDialog(parentGUI, "PET ADDED");
     }
 }
